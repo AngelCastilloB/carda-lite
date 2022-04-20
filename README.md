@@ -1,4 +1,6 @@
+
 # CardaLite
+[![build status](https://github.com/AngelCastilloB/carda-lite/workflows/Build/badge.svg)](https://github.com/AngelCastilloB/carda-lite/actions)
 
 A very simple Cardano wallet written entirely in TypeScript.
 
