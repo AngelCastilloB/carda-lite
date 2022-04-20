@@ -20,17 +20,23 @@
 /* IMPORTS *******************************************************************/
 
 import { Injectable }            from '@angular/core';
+import { environment }           from 'src/environments/environment';
 import * as CardanoSerialization from '@emurgo/cardano-serialization-lib-asmjs'
 import { Wallet }                from "../models/wallet";
 import { Transaction }           from '../models/transaction';
+import { NetworkId }             from '../models/networkId';
 import { entropyToMnemonic,
          mnemonicToEntropy,
          validateMnemonic }      from 'bip39';
 
 /* CONSTANTS **********************************************************************************************************/
 
-const ENTROPY_SIZE:        number = 32;
-const INVALID_ENTROPY_MSG: string = "Invalid Entropy";
+const ENTROPY_SIZE:            number = 32;
+const ADA_LOVELACE_DEATH_YEAR: number = 1852;
+const ADA_LOVELACE_BIRTH_YEAR: number = 1815;
+const ACCOUNT_INDEX:           number = 0;
+const INVALID_ENTROPY_MSG:     string = "Invalid Entropy";
+const INVALID_MNEMONIC_MSG:    string = "Invalid Mnemonic";
 
 /* EXPORTS ************************************************************************************************************/
 
@@ -49,7 +55,6 @@ export class WalletService
    */
   constructor()
   {
-    console.log("B");
   }
 
   /**
@@ -66,19 +71,20 @@ export class WalletService
   {
     if (!entropy)
     {
-      entropy =  new Uint8Array(ENTROPY_SIZE);
+      // 256 bits of entropy (24 words)
+      entropy = new Uint8Array(ENTROPY_SIZE);
       window.crypto.getRandomValues(entropy);
     }
     else
     {
       if (entropy.length < 16)
-        throw new TypeError(INVALID_ENTROPY_MSG);
+        throw new Error(INVALID_ENTROPY_MSG);
 
       if (entropy.length > 32)
-        throw new TypeError(INVALID_ENTROPY_MSG);
+        throw new Error(INVALID_ENTROPY_MSG);
 
       if (entropy.length % 4 !== 0)
-        throw new TypeError(INVALID_ENTROPY_MSG);
+        throw new Error(INVALID_ENTROPY_MSG);
     }
 
     return entropyToMnemonic(<Buffer>entropy.buffer);
@@ -91,7 +97,7 @@ export class WalletService
    * 
    * @returns True if the mnemonic is valid; otherwise; false.
    */
-  public isValidMneonic(seedPhrase: string)
+  public isValidMnemonic(seedPhrase: string)
   {
     return validateMnemonic(seedPhrase);
   }
@@ -105,27 +111,37 @@ export class WalletService
    */
   public create(seedPhrase: string): Wallet
   {
+    if (!this.isValidMnemonic(seedPhrase))
+      throw new Error(INVALID_MNEMONIC_MSG);
+
     const entropy = mnemonicToEntropy(seedPhrase);
     const rootKey = CardanoSerialization.Bip32PrivateKey.from_bip39_entropy(Buffer.from(entropy, 'hex'), Buffer.from(''));
 
     const accountKey = CardanoSerialization.Bip32PrivateKey.from_bytes(rootKey.as_bytes())
-        .derive(0x80000000 + 1852)
-        .derive(0x80000000 + 1815)
-        .derive(0x80000000);
+        .derive(this.harden(ADA_LOVELACE_DEATH_YEAR)) // Purpose
+        .derive(this.harden(ADA_LOVELACE_BIRTH_YEAR)) // Coin Type
+        .derive(this.harden(ACCOUNT_INDEX));
 
+    // We derive the first payment key and stake key.
     const paymentKey = accountKey.derive(0).derive(0).to_raw_key();
     const stakeKey   = accountKey.derive(2).derive(0).to_raw_key();
 
     const paymentKeyHash = paymentKey.to_public().hash();
-    const stakeKeyHash = stakeKey.to_public().hash();
+    const stakeKeyHash   = stakeKey.to_public().hash();
 
+    const networkId = environment.networkId === NetworkId.Mainnet ? 
+        CardanoSerialization.NetworkInfo.mainnet().network_id() : 
+        CardanoSerialization.NetworkInfo.testnet().network_id();
+    
     const paymentAddr = CardanoSerialization.BaseAddress.new(
-      CardanoSerialization.NetworkInfo.testnet().network_id(),
+      networkId,
       CardanoSerialization.StakeCredential.from_keyhash(paymentKeyHash),
       CardanoSerialization.StakeCredential.from_keyhash(stakeKeyHash)
     ).to_address().to_bech32();
 
-    return new Wallet(rootKey, accountKey, paymentKey, stakeKey, paymentAddr, new Array<Transaction>());
+    // We are only supporting single address mode for this proof of concept, so we only 
+    // need the first payment key and its payment address.
+    return new Wallet(paymentKey, paymentAddr);
   }
 
   /**
@@ -148,5 +164,17 @@ export class WalletService
     txWitnessSet.set_vkeys(vkeyWitnesses);
 
     return txWitnessSet;
+  }
+
+  /**
+   * This hardening function prevents public key generation and helps preserve the security of the keys.
+   * 
+   * @param num The number to be hardened.
+   * 
+   * @returns The hardened number
+   */
+  private harden(num: number)
+  {
+    return 0x80000000 + num
   }
 }

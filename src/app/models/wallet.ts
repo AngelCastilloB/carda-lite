@@ -29,13 +29,15 @@ import { Transaction }                 from '../models/transaction'
  */
  export class Wallet
  {
+     /**
+      * Initiaize a new instance of the WalletService class.
+      * 
+      * @param paymentKey The payment key.
+      * @param paymentAddress The payment address.
+      */
      constructor(
-         public rootKey: Bip32PrivateKey,
-         public accountKey: Bip32PrivateKey,
          public paymentKey: PrivateKey,
-         public stakeKey: PrivateKey,
-         public paymentAddress: string,
-         public transactions: Array<Transaction>)
+         public paymentAddress: string)
      {
      }
  }
