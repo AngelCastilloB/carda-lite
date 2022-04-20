@@ -10,7 +10,7 @@
     "watch": "ng build --watch --configuration development",
     "test": "ng test --watch=false --browsers=ChromeHeadlessCustom",
     "test:watch": "ng test",
-    "build:ci": "npm run clean && npm run test && npm run build:prod"
+    "build:ci": "npm run clean && npm run test && npm run build:prod --node-flags --max-old-space-size=4096 --no-warnings"
   },
   "private": true,
   "dependencies": {
