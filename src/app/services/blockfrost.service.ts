@@ -21,8 +21,14 @@
  
 import { Injectable }                                 from '@angular/core';
 import { environment }                                from 'src/environments/environment';
-import { Observable, throwError, catchError }         from 'rxjs';
 import { HttpClient, HttpErrorResponse, HttpHeaders } from '@angular/common/http';
+import { NetworkParameters }                          from '../models/networkParameters';
+import { Observable, throwError, catchError, map,
+         pluck, mergeAll, mergeMap }                  from 'rxjs';
+
+/* CONSTANTS ******************************************************************/
+
+const MINT_UTXO_VALUE: string = "1000000";
 
 /* EXPORTS ********************************************************************/
 
@@ -51,7 +57,18 @@ export class BlockfrostService
   public getLatestProtocolParameters()
   {
     return this.sendRequest("/epochs/latest/parameters")
-               .pipe(catchError(this.handleError));
+               .pipe(catchError(this.handleError))
+               .pipe(map((params: any)=> new NetworkParameters(
+                  { minFeeA: params.min_fee_a.toString(), minFeeB: params.min_fee_b.toString()},
+                  MINT_UTXO_VALUE,
+                  params.pool_deposit, 
+                  params.key_deposit,
+                  params.coins_per_utxo_word,
+                  params.max_val_size,
+                  params.price_mem,
+                  params.price_step,
+                  parseInt(params.max_tx_size))
+                ));
   }
 
   /**
@@ -63,7 +80,7 @@ export class BlockfrostService
    */
   public getAddressBalance(address: string)
   {
-    return this.sendRequest(`/epochs/latest/addresses/${address}`)
+    return this.sendRequest(`/addresses/${address}`)
                .pipe(catchError(this.handleError));
   }
 
@@ -77,7 +94,8 @@ export class BlockfrostService
   public getAddressUtxos(address: string)
   {
     return this.sendRequest(`/addresses/${address}/utxos`)
-               .pipe(catchError(this.handleError));
+               .pipe(catchError(this.handleError))
+               .pipe(mergeAll())
   }
 
   /**
@@ -90,7 +108,10 @@ export class BlockfrostService
   public getTransactions(address: string)
   {
     return this.sendRequest(`addresses/${address}/transactions`)
-               .pipe(catchError(this.handleError));
+               .pipe(catchError(this.handleError))
+               .pipe(mergeAll())
+               .pipe(pluck('tx_hash'))
+               .pipe(mergeMap(txId =>this.sendRequest(`/txs/${txId}`)));
   }
 
   /**
@@ -100,7 +121,7 @@ export class BlockfrostService
    * 
    * @returns The result of the request.
    */
-  private sendRequest(endpoint: string) : Observable<Object>
+  private sendRequest(endpoint: string) : Observable<any>
   {
     return this._httpClient.get(`${environment.blockfrostEndpoint}\\${endpoint}`, {
       headers: new HttpHeaders({

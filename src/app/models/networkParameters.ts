@@ -1,5 +1,5 @@
 /**
- * @file wallet.ts
+ * @file networkParameters.ts
  *
  * @author Angel Castillo <angel.castillob@protonmail.com>
  * @date   Apr 20 2022
@@ -17,27 +17,26 @@
  * limitations under the License.
  */
 
-/* IMPORTS *******************************************************************/
-
-import { Bip32PrivateKey, PrivateKey } from '@emurgo/cardano-serialization-lib-asmjs'
-import { Transaction }                 from '../models/transaction'
-
 /* EXPORTS *******************************************************************/
 
 /**
- * @summary The Wallet model.
+ * @summary The network parameters.
  */
- export class Wallet
+ export class NetworkParameters
  {
-     /**
-      * Initiaize a new instance of the WalletService class.
-      * 
-      * @param paymentKey The payment key.
-      * @param paymentAddress The payment address.
-      */
-     constructor(
-         public paymentKey: PrivateKey,
-         public paymentAddress: string)
-     {
-     }
+   /**
+    * Initiaize a new instance of the NetworkParameters class.
+    */
+    constructor(
+      public linearFee: any,
+      public minUtxo: string = "1000000",
+      public poolDeposit: string,
+      public keyDeposit: string,
+      public coinsPerUtxoWord: string,
+      public maxValSize: string,
+      public priceMem: number,
+      public priceStep: number,
+      public maxTxSize: number,)
+    {
+    }  
  }
