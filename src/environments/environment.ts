@@ -7,7 +7,7 @@ export const environment = {
   blockfrostEndpoint: 'https://cardano-testnet.blockfrost.io/api/v0',
   networkId: "testnet",
   blockfrost: {
-    projectId: "",
+    projectId: "testnetozfiHqTtDYvfiwgG4PQmRyt5E3tBJVDs",
     isTestnet: true
   }
 };

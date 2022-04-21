@@ -19,22 +19,23 @@
 
 /* IMPORTS *******************************************************************/
 
-import { NgModule }                from '@angular/core';
-import { BrowserModule }           from '@angular/platform-browser';
-import { HttpClientModule }        from '@angular/common/http';
-import { AppRoutingModule }        from './app-routing.module';
-import { AppComponent }            from './components/app/app.component';
-import { HeaderComponent }         from './components/header/header.component';
-import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
-import { WalletService }           from './services/wallet.service'
-import { BlockfrostService }       from './services/blockfrost.service'
-import { MatToolbarModule }        from '@angular/material/toolbar'
-import { MatButtonModule }         from '@angular/material/button'
-import { MatIconModule }           from '@angular/material/icon'
-import { MatGridListModule }       from '@angular/material/grid-list'
-import { MatCardModule }           from '@angular/material/card'
-import { MatFormFieldModule }      from '@angular/material/form-field'
-import { MatInputModule }          from '@angular/material/input'
+import { NgModule }                    from '@angular/core';
+import { BrowserModule }               from '@angular/platform-browser';
+import { HttpClientModule }            from '@angular/common/http';
+import { AppRoutingModule }            from './app-routing.module';
+import { AppComponent }                from './components/app/app.component';
+import { HeaderComponent, SeedDialog } from './components/header/header.component';
+import { BrowserAnimationsModule }     from '@angular/platform-browser/animations';
+import { WalletService }               from './services/wallet.service'
+import { BlockfrostService }           from './services/blockfrost.service'
+import { MatToolbarModule }            from '@angular/material/toolbar'
+import { MatButtonModule }             from '@angular/material/button'
+import { MatIconModule }               from '@angular/material/icon'
+import { MatGridListModule }           from '@angular/material/grid-list'
+import { MatCardModule }               from '@angular/material/card'
+import { MatFormFieldModule }          from '@angular/material/form-field'
+import { MatInputModule }              from '@angular/material/input'
+import { MatDialogModule }             from '@angular/material/dialog'
 
 /* EXPORTS ********************************************************************/
 
@@ -44,7 +45,8 @@ import { MatInputModule }          from '@angular/material/input'
 @NgModule({
   declarations: [
     AppComponent,
-    HeaderComponent
+    HeaderComponent,
+    SeedDialog
   ],
   imports: [
     BrowserModule,
@@ -57,7 +59,8 @@ import { MatInputModule }          from '@angular/material/input'
     MatGridListModule,
     MatCardModule,
     MatFormFieldModule,
-    MatInputModule
+    MatInputModule,
+    MatDialogModule
   ],
   providers: [WalletService, BlockfrostService],
   bootstrap: [AppComponent]

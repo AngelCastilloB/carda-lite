@@ -18,9 +18,10 @@
  */
 
 /* IMPORTS *******************************************************************/
-
-import { Component } from '@angular/core';
-import {MatToolbarModule} from '@angular/material/toolbar';
+ 
+import { Component, Inject }                       from '@angular/core';
+import { WalletService }                           from 'src/app/services/wallet.service';
+import { MatDialog, MatDialogRef, MAT_DIALOG_DATA} from '@angular/material/dialog';
 
 /* EXPORTS ********************************************************************/
 
@@ -34,11 +35,49 @@ import {MatToolbarModule} from '@angular/material/toolbar';
 })
 export class HeaderComponent
 {
+  /**
+   * Initiaize a new instance of the HeaderComponent class.
+   */
+  constructor(private _service: WalletService, public dialog: MatDialog)
+  {
+  }
 
-    /**
-     * Initiaize a new instance of the HeaderComponent class.
-     */
-     constructor()
-     {
-     }
+  /**
+   * Opens the diaglos showing the seed phrase.
+   */
+  openDialog(): void
+  {
+    const dialogRef = this.dialog.open(SeedDialog,
+    {
+      width: '600px',
+      data: this._service.createSeedPhrases()
+    });
+  }
+}
+
+/* DIALOG ********************************************************************/
+
+@Component({
+  selector: 'seed-dialog',
+  templateUrl: 'seed-dialog.html',
+})
+export class SeedDialog
+{
+  /**
+   * Initializes a new instance of the SeedDialog.
+   * 
+   * @param dialogRef The dialog reference.
+   * @param seeds The seed phrase.
+   */
+  constructor(
+    public dialogRef: MatDialogRef<SeedDialog>,
+    @Inject(MAT_DIALOG_DATA) public seeds: string) {}
+
+  /**
+   * Closes the dialod.
+   */
+  onCloseClick(): void
+  {
+    this.dialogRef.close();
+  }
 }
