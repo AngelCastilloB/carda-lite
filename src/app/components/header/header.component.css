@@ -1,0 +1,28 @@
+.fixed-header {
+    position: fixed;
+    z-index:999;
+  }
+  
+  #frugalmap {
+    height: 300px;
+    width: 100%;
+    margin-top:50px;
+  }
+  
+  .mat-elevation-z5 {
+    position: relative;
+    z-index: 2;
+  }
+
+ .spacer {
+    flex: 1 1 auto;
+  }
+
+  .toolbar-content {
+    width: 65%;
+    margin: auto;
+  }
+
+  .button-right {
+    float: right;
+  }

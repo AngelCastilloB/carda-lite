@@ -1,5 +1,5 @@
 /**
- * @file wallet.ts
+ * @file header.component.ts
  *
  * @author Angel Castillo <angel.castillob@protonmail.com>
  * @date   Apr 20 2022
@@ -19,24 +19,26 @@
 
 /* IMPORTS *******************************************************************/
 
-import { PrivateKey } from '@emurgo/cardano-serialization-lib-asmjs'
+import { Component } from '@angular/core';
+import {MatToolbarModule} from '@angular/material/toolbar';
 
-/* EXPORTS *******************************************************************/
+/* EXPORTS ********************************************************************/
 
 /**
- * @summary The Wallet model.
+ * Main application component.
  */
- export class Wallet
- {
-     /**
-      * Initiaize a new instance of the WalletService class.
-      * 
-      * @param paymentKey The payment key.
-      * @param paymentAddress The payment address.
-      */
-     constructor(
-         public paymentKey: PrivateKey,
-         public paymentAddress: string)
+@Component({
+  selector: 'app-header',
+  templateUrl: './header.component.html',
+  styleUrls: ['./header.component.css']
+})
+export class HeaderComponent
+{
+
+    /**
+     * Initiaize a new instance of the HeaderComponent class.
+     */
+     constructor()
      {
      }
- }
+}

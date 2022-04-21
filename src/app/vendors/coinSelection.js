@@ -10,9 +10,9 @@ import {
   TransactionUnspentOutput,
   TransactionOutputs,
   Value,
-} from "./@emurgo/cardano-serialization-lib-browser/cardano_serialization_lib";
+} from '@emurgo/cardano-serialization-lib-asmjs'
 const BigInt = typeof window !== "undefined" && window.BigInt;
-import * as EmurgoSerialization from './@emurgo/cardano-serialization-lib-browser/cardano_serialization_lib'
+import * as EmurgoSerialization from '@emurgo/cardano-serialization-lib-asmjs'
 
 /**
  * BerryPool implementation of the __Random-Improve__ coin selection algorithm.

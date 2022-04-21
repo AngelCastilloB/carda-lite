@@ -1,0 +1,25 @@
+.content {
+  width: 65%;
+  margin: auto;
+}
+
+.spacer {
+  flex: 1 1 auto;
+}
+
+.full-width {
+  width: 60%;
+  margin-left: 20px;
+}
+
+.button-margin {
+  margin-top: 20px!important;
+  margin-left: 20px!important;
+  margin-bottom: 20px!important;
+}
+
+.message-margin {
+  margin-left: 16px!important;
+  margin-top: 40px!important;
+  margin-bottom: 40px!important;
+}

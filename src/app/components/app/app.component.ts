@@ -25,6 +25,14 @@ import { BlockfrostService } from '../../services/blockfrost.service';
 
 /* EXPORTS ********************************************************************/
 
+export interface Tile {
+  color: string;
+  cols: number;
+  rows: number;
+  text: string;
+}
+
+
 /**
  * Main application component.
  */
@@ -35,13 +43,18 @@ import { BlockfrostService } from '../../services/blockfrost.service';
 })
 export class AppComponent
 {
+  tiles: Tile[] = [
+    {text: 'One', cols: 8, rows: 4, color: 'lightblue'},
+    {text: 'Four', cols: 4, rows: 4, color: '#DDBDF1'},
+  ];
+
   title = 'carda-lite';
 
     /**
    * Initiaize a new instance of the WalletService class.
    */
      constructor(_walletService: WalletService, _blockfrostService: BlockfrostService)
-     {
+     {/*
        let seed = _walletService.createSeedPhrases();
         console.log(seed);
 
@@ -51,7 +64,7 @@ export class AppComponent
         _blockfrostService.getAddressUtxos("addr_test1qp8x8l9ldlmhf5s285fa2g74k0wfjskqztvqw7vda2x54qzwa5e343pw7w8d2d3sqh4uv7303r29mugnlj6uewhrcyvqr20x50").subscribe((x)=> console.log(x));
         _blockfrostService.getAddressBalance("addr_test1qp8x8l9ldlmhf5s285fa2g74k0wfjskqztvqw7vda2x54qzwa5e343pw7w8d2d3sqh4uv7303r29mugnlj6uewhrcyvqr20x50").subscribe((x)=> console.log(x));
         _blockfrostService.getTransactions("addr_test1qp8x8l9ldlmhf5s285fa2g74k0wfjskqztvqw7vda2x54qzwa5e343pw7w8d2d3sqh4uv7303r29mugnlj6uewhrcyvqr20x50").subscribe((x)=> console.log(x));
-
+      */
      }
    
 }
