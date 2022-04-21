@@ -5,7 +5,11 @@
 export const environment = {
   production: false,
   blockfrostEndpoint: 'https://cardano-testnet.blockfrost.io/api/v0',
-  networkId: "testnet"
+  networkId: "testnet",
+  blockfrost: {
+    projectId: "", // see: https://blockfrost.io
+    isTestnet: true
+  }
 };
 
 /*
