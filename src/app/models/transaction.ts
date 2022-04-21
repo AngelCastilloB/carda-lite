@@ -24,12 +24,23 @@
  */
  export class Transaction
  {
+     /**
+      * Initiaize a new instance of the Transaction class.
+      * 
+      * @param txHash The transaction hash.
+      * @param txIndex The transaction index.
+      * @param blockHeight The block height.
+      * @param blockTime The block time. 
+      * @param outputAmount Transaction output amount.
+      * @param fee transaction fee.
+      */
      constructor(
          public txHash: string,
          public txIndex: number,
          public blockHeight: number,
          public blockTime: number,
-         public netBalance: number)
+         public outputAmount: number,
+         public fee: number)
      {
      }
  }

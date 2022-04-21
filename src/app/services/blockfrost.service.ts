@@ -25,6 +25,7 @@ import { HttpClient, HttpErrorResponse, HttpHeaders } from '@angular/common/http
 import { NetworkParameters }                          from '../models/networkParameters';
 import { Observable, throwError, catchError, map,
          pluck, mergeAll, mergeMap }                  from 'rxjs';
+import { Transaction }                                from '../models/transaction';
 
 /* CONSTANTS ******************************************************************/
 
@@ -56,7 +57,7 @@ export class BlockfrostService
    */
   public getLatestProtocolParameters()
   {
-    return this.sendRequest("/epochs/latest/parameters")
+    return this.sendRequest("epochs/latest/parameters")
                .pipe(catchError(this.handleError))
                .pipe(map((params: any)=> new NetworkParameters(
                   { minFeeA: params.min_fee_a.toString(), minFeeB: params.min_fee_b.toString()},
@@ -80,8 +81,9 @@ export class BlockfrostService
    */
   public getAddressBalance(address: string)
   {
-    return this.sendRequest(`/addresses/${address}`)
-               .pipe(catchError(this.handleError));
+    return this.sendRequest(`addresses/${address}`)
+               .pipe(catchError(this.handleError))
+               .pipe(map((result: any) => result.amount.find((entry:any)=> entry.unit === "lovelace").quantity));
   }
 
   /**
@@ -93,9 +95,8 @@ export class BlockfrostService
    */
   public getAddressUtxos(address: string)
   {
-    return this.sendRequest(`/addresses/${address}/utxos`)
+    return this.sendRequest(`addresses/${address}/utxos`)
                .pipe(catchError(this.handleError))
-               .pipe(mergeAll())
   }
 
   /**
@@ -111,7 +112,12 @@ export class BlockfrostService
                .pipe(catchError(this.handleError))
                .pipe(mergeAll())
                .pipe(pluck('tx_hash'))
-               .pipe(mergeMap(txId =>this.sendRequest(`/txs/${txId}`)));
+               .pipe(mergeMap(txId =>this.sendRequest(`txs/${txId}`)))
+               .pipe(map((result: any) =>
+               {
+                let amount = result.output_amount.find((entry:any)=> entry.unit === "lovelace").quantity;
+                return new Transaction(result.hash, result.index, result.block_height, result.block_time, amount, result.fees);
+               }));
   }
 
   /**
@@ -123,7 +129,7 @@ export class BlockfrostService
    */
   private sendRequest(endpoint: string) : Observable<any>
   {
-    return this._httpClient.get(`${environment.blockfrostEndpoint}\\${endpoint}`, {
+    return this._httpClient.get(`${environment.blockfrostEndpoint}\/${endpoint}`, {
       headers: new HttpHeaders({
         'project_id':  environment.blockfrost.projectId,
       })
