@@ -22,16 +22,9 @@
 import { Component }         from '@angular/core';
 import { WalletService }     from '../../services/wallet.service'
 import { BlockfrostService } from '../../services/blockfrost.service';
+import { Wallet }            from 'src/app/models/wallet';
 
 /* EXPORTS ********************************************************************/
-
-export interface Tile {
-  color: string;
-  cols: number;
-  rows: number;
-  text: string;
-}
-
 
 /**
  * Main application component.
@@ -43,28 +36,40 @@ export interface Tile {
 })
 export class AppComponent
 {
-  tiles: Tile[] = [
-    {text: 'One', cols: 8, rows: 4, color: 'lightblue'},
-    {text: 'Four', cols: 4, rows: 4, color: '#DDBDF1'},
-  ];
+    _wallet: any = null;
+    _currentBalance: number = 0;
+    /**
+     * Initiaize a new instance of the WalletService class.
+     */
+    constructor(private _walletService: WalletService, private _blockfrostService: BlockfrostService)
+    {/*
+      let seed = _walletService.createSeedPhrases();
+      console.log(seed);
 
-  title = 'carda-lite';
+      console.log(_walletService.create("ginger tobacco ignore sheriff jelly clean leisure century cheese light lend attitude quality blur cage outer census earn visual hour leader special budget logic"));
+      _blockfrostService.getLatestProtocolParameters().subscribe((x)=> console.log(x));
+
+      _blockfrostService.getAddressUtxos("addr_test1qp8x8l9ldlmhf5s285fa2g74k0wfjskqztvqw7vda2x54qzwa5e343pw7w8d2d3sqh4uv7303r29mugnlj6uewhrcyvqr20x50").subscribe((x)=> console.log(x));
+      _blockfrostService.getAddressBalance("addr_test1qp8x8l9ldlmhf5s285fa2g74k0wfjskqztvqw7vda2x54qzwa5e343pw7w8d2d3sqh4uv7303r29mugnlj6uewhrcyvqr20x50").subscribe((x)=> console.log(x));
+      _blockfrostService.getTransactions("addr_test1qp8x8l9ldlmhf5s285fa2g74k0wfjskqztvqw7vda2x54qzwa5e343pw7w8d2d3sqh4uv7303r29mugnlj6uewhrcyvqr20x50").subscribe((x)=> console.log(x));
+    */
+    }
 
     /**
-   * Initiaize a new instance of the WalletService class.
-   */
-     constructor(_walletService: WalletService, _blockfrostService: BlockfrostService)
-     {/*
-       let seed = _walletService.createSeedPhrases();
-        console.log(seed);
-
-        console.log(_walletService.create("ginger tobacco ignore sheriff jelly clean leisure century cheese light lend attitude quality blur cage outer census earn visual hour leader special budget logic"));
-        _blockfrostService.getLatestProtocolParameters().subscribe((x)=> console.log(x));
-
-        _blockfrostService.getAddressUtxos("addr_test1qp8x8l9ldlmhf5s285fa2g74k0wfjskqztvqw7vda2x54qzwa5e343pw7w8d2d3sqh4uv7303r29mugnlj6uewhrcyvqr20x50").subscribe((x)=> console.log(x));
-        _blockfrostService.getAddressBalance("addr_test1qp8x8l9ldlmhf5s285fa2g74k0wfjskqztvqw7vda2x54qzwa5e343pw7w8d2d3sqh4uv7303r29mugnlj6uewhrcyvqr20x50").subscribe((x)=> console.log(x));
-        _blockfrostService.getTransactions("addr_test1qp8x8l9ldlmhf5s285fa2g74k0wfjskqztvqw7vda2x54qzwa5e343pw7w8d2d3sqh4uv7303r29mugnlj6uewhrcyvqr20x50").subscribe((x)=> console.log(x));
-      */
-     }
-   
+     * Unlocks the wallets given its seed phrase.
+     * 
+     * @param seed The seed phrase.
+     */
+    unlock(seed: string)
+    {
+      if (this._walletService.isValidMnemonic(seed))
+      {
+        this._wallet = this._walletService.create(seed);
+        this._blockfrostService.getAddressBalance(this._wallet.paymentAddress).subscribe((x)=> this._currentBalance = x);
+      }
+      else
+      {
+        console.log("Invalid");// show invalid message
+      }
+    }
 }

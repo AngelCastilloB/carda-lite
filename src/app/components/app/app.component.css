@@ -23,3 +23,11 @@
   margin-top: 40px!important;
   margin-bottom: 40px!important;
 }
+
+.content {
+  padding: 16px;
+}
+
+.content > mat-card {
+  margin-bottom: 16px;
+}
