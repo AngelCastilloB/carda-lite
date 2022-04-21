@@ -12,6 +12,9 @@
     "test:watch": "ng test",
     "build:ci": "npm run clean && npm run test && node --max_old_space_size=8048 --no-warnings ./node_modules/@angular/cli/bin/ng build"
   },
+  "browser": {
+    "dns": false
+  },
   "private": true,
   "dependencies": {
     "@angular/animations": "~13.3.0",
@@ -24,12 +27,25 @@
     "@angular/platform-browser": "~13.3.0",
     "@angular/platform-browser-dynamic": "~13.3.0",
     "@angular/router": "~13.3.0",
+    "@blockfrost/blockfrost-js": "^4.1.0",
     "@emurgo/cardano-message-signing-asmjs": "^1.0.1",
     "@emurgo/cardano-serialization-lib-asmjs": "^10.0.4",
     "bip39": "^3.0.4",
+    "browserify-zlib": "^0.2.0",
     "buffer": "^6.0.3",
     "buffer-browserify": "^0.2.5",
+    "fs-web": "^1.0.1",
+    "http-browserify": "^1.7.0",
+    "http-browserify-2": "^0.5.1",
+    "https-browserify": "^1.0.0",
+    "net": "^1.0.2",
+    "net-browserify": "^0.2.4",
+    "os-browserify": "^0.3.0",
+    "path-browserify": "^1.0.1",
     "rxjs": "~7.5.0",
+    "stream-http": "^3.2.0",
+    "timers-browserify": "^2.0.12",
+    "tls-browserify": "^0.2.2",
     "tslib": "^2.3.0",
     "zone.js": "~0.11.4"
   },

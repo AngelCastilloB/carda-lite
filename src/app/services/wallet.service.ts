@@ -1,5 +1,5 @@
 /**
- * @file Wallet.service.ts
+ * @file wallet.service.ts
  *
  * @author Angel Castillo <angel.castillob@protonmail.com>
  * @date   Apr 20 2022
@@ -23,7 +23,6 @@ import { Injectable }            from '@angular/core';
 import { environment }           from 'src/environments/environment';
 import * as CardanoSerialization from '@emurgo/cardano-serialization-lib-asmjs'
 import { Wallet }                from "../models/wallet";
-import { Transaction }           from '../models/transaction';
 import { NetworkId }             from '../models/networkId';
 import { entropyToMnemonic,
          mnemonicToEntropy,
