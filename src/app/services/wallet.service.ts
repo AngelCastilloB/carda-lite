@@ -1,5 +1,5 @@
 /**
- * @file Wallet.service.ts
+ * @file wallet.service.ts
  *
  * @author Angel Castillo <angel.castillob@protonmail.com>
  * @date   Apr 20 2022
