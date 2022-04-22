@@ -24,8 +24,9 @@ import { environment }                                from 'src/environments/env
 import { HttpClient, HttpErrorResponse, HttpHeaders } from '@angular/common/http';
 import { NetworkParameters }                          from '../models/networkParameters';
 import { Observable, throwError, catchError, map,
-         pluck, mergeAll, mergeMap, flatMap }         from 'rxjs';
+         pluck, mergeAll, mergeMap, from }            from 'rxjs';
 import { Transaction }                                from '../models/transaction';
+import CoinSelection                                  from '../vendors/coinSelection.js'
 
 /* CONSTANTS ******************************************************************/
 
@@ -97,6 +98,7 @@ export class BlockfrostService
   {
     return this.sendRequest(`addresses/${address}/utxos`)
                .pipe(catchError(this.handleError))
+               .pipe(mergeMap((result: any) => from(Promise.all(result.map(async (utxo:any) => await CoinSelection.toUtxo(utxo, address))))));
   }
 
   /**
@@ -123,24 +125,40 @@ export class BlockfrostService
                   let totalInputAmount  = 0;
                   let totalOutputAmount = 0;
 
-                  let inputs =  result.inputs.find((entry:any)=> entry.address === address);
+                  let inputs = result.inputs.filter((entry:any)=> entry.address === address);
                   
                   // If we found input coming from our wallet, we need to substract it.
-                  if (inputs !== undefined)
-                    totalInputAmount = inputs.amount.find((entry:any)=> entry.unit === "lovelace").quantity;
+                  inputs.forEach(element => {
+                    totalInputAmount += parseInt(element.amount.find((entry:any)=> entry.unit === "lovelace").quantity);
+                  });
 
-                  let outputs =  result.outputs.find((entry:any)=> entry.address === address);
+                  let outputs =  result.outputs.filter((entry:any)=> entry.address === address);
 
                   // If we found output coming to our wallet, we need to add it.
-                  if (outputs !== undefined)
-                    totalOutputAmount = outputs.amount.find((entry:any)=> entry.unit === "lovelace").quantity;
+                  outputs.forEach(element => {
+                    totalOutputAmount += parseInt(element.amount.find((entry:any)=> entry.unit === "lovelace").quantity);
+                  });
 
                   tx.outputAmount = totalOutputAmount - totalInputAmount;
-
                   return tx;
                 }))));
   }
 
+  /**
+   * Submit a transaction to blockfrost.
+   * 
+   * @returns The result of the request.
+   */
+  public submitTransaction(cbor: any) : Observable<any>
+  {
+    return this._httpClient.post(`${environment.blockfrostEndpoint}\/tx/submit`, cbor, {
+      headers: new HttpHeaders({
+        'Content-Type': 'application/cbor',
+        'project_id':  environment.blockfrost.projectId
+      })
+    });
+  }
+     
   /**
    * Sends a http GET request to blockfrost.
    * 
