@@ -37,7 +37,7 @@ export class ReceiveComponent
     address:string = "";
 
     /**
-     * Initiaize a new instance of the BalanceComponent class.
+     * Initiaize a new instance of the ReceiveComponent class.
      */
     constructor()
     {

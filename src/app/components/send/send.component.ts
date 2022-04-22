@@ -19,17 +19,16 @@
 
 /* IMPORTS *******************************************************************/
 
-import { Component, EventEmitter, Input, Output } from '@angular/core';
+import { Component, EventEmitter, Output } from '@angular/core';
 
 /* CONSTANTS *****************************************************************/
 
-const ADA_DECIMAL_POINTS: number = 6;
-const LOVELACE_IN_ADA:    number = 1000000;
+const LOVELACE_IN_ADA: number = 1000000;
 
 /* EXPORTS *******************************************************************/
 
 /**
- * Main application component.
+ * Send component.
  */
 @Component({
   selector: 'send',
@@ -38,16 +37,50 @@ const LOVELACE_IN_ADA:    number = 1000000;
 })
 export class SendComponent
 {
-    @Input()
-    utxos:any = null;
+    _receivingAddress: string = "";
+    _amount:           number = 0;
 
     @Output()
-    onRefresh:EventEmitter<void> =new EventEmitter<void>();
+    onSend:EventEmitter<any> = new EventEmitter<any>();
 
     /**
-     * Initiaize a new instance of the BalanceComponent class.
+     * Initiaize a new instance of the SendComponent class.
      */
     constructor()
     {
+    }
+
+    /**
+     * Event handler for when the send button is clicked.
+     */
+    onSendClick()
+    {
+      this.onSend.emit({"receivingAddress": this._receivingAddress,"Amount": Math.floor(this._amount * LOVELACE_IN_ADA)});
+    }
+
+    /**
+     * Checks whether the keypress is valid.
+     * 
+     * @param key The key being pressed.
+     * 
+     * @returns true if valid; otherwise; false.
+     */
+    keyPressNumbersWithDecimal(key:any)
+    {
+      var keycode = (key.which) ? key.which : key.keyCode;
+
+      if (!(keycode == 8 || keycode == 46) && (keycode < 48 || keycode > 57))
+      {
+          return false;
+      }
+      else
+      {
+          var parts = key.srcElement.value.split('.');
+
+          if (parts.length > 1 && keycode == 46)
+              return false;
+
+          return true;
+      }
     }
 }

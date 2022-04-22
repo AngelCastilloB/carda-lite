@@ -42,7 +42,8 @@ import { MatInputModule }              from '@angular/material/input'
 import { MatDialogModule }             from '@angular/material/dialog'
 import { FlexLayoutModule }            from '@angular/flex-layout'
 import { QRCodeModule }                from 'angular2-qrcode';
-import {AutosizeModule}                from '@techiediaries/ngx-textarea-autosize';
+import { AutosizeModule}               from '@techiediaries/ngx-textarea-autosize';
+import { FormsModule }                 from '@angular/forms';
 
 /* EXPORTS ********************************************************************/
 
@@ -74,7 +75,8 @@ import {AutosizeModule}                from '@techiediaries/ngx-textarea-autosiz
     MatDialogModule,
     FlexLayoutModule,
     QRCodeModule,
-    AutosizeModule
+    AutosizeModule,
+    FormsModule
   ],
   providers: [WalletService, BlockfrostService],
   bootstrap: [AppComponent]

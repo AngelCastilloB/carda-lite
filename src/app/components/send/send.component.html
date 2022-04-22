@@ -3,9 +3,23 @@
       <mat-card-title>Send</mat-card-title>
     </mat-card-header>
     <mat-card-content>
-      <p class="balance">
-      </p>
-      <br>
+      <form class="example-form">
+        <mat-form-field class="full-width">
+          <input matInput type="text" placeholder="Receiving Address" [(ngModel)]="_receivingAddress" name="address">
+          <button mat-button *ngIf="_receivingAddress" matSuffix mat-icon-button aria-label="Clear" (click)="_receivingAddress=''">
+            <mat-icon>close</mat-icon>
+          </button>
+        </mat-form-field>
+        <br>
+        <mat-form-field class="full-width">
+          <input (keypress)="keyPressNumbersWithDecimal($event)" matInput type="text" placeholder="Amount to Send (in ADA)" [(ngModel)]="_amount" name="amount">
+          <button mat-button *ngIf="_amount" matSuffix mat-icon-button aria-label="Clear" (click)="_amount=0">
+            <mat-icon>close</mat-icon>
+          </button>
+        </mat-form-field>
+        <br>
+        <button mat-raised-button class="button-margin" color="primary" class="button-margin" (click)="onSendClick()">Send</button>
+      </form>
     </mat-card-content>
   </mat-card>
 

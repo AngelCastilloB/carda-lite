@@ -27,7 +27,7 @@ import { Component, Inject, Input,
 /* EXPORTS ********************************************************************/
 
 /**
- * Main application component.
+ * Header component.
  */
 @Component({
   selector: 'app-header',

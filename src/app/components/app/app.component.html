@@ -11,7 +11,7 @@
       <p class="message-margin">Enter the 24-word wallet mnemonic seed phrase to unlock the wallet.</p>
       <form>
         <mat-form-field class="full-width">
-          <textarea formControlName="seeds" #seed matInput rows="1" style="height: 50px;" autosize  placeholder="24-word wallet mnemonic"></textarea>
+          <textarea #seed matInput rows="1" style="height: 50px;" autosize placeholder="24-word wallet mnemonic"></textarea>
         </mat-form-field>
         <p *ngIf="!_isMnemonicValid" class="invalid-mnemonic">Invalid Mnemonic</p>
       </form>
@@ -27,7 +27,7 @@
       <balance  [currentBalance]="_currentBalance" (onRefresh)="onWallteRefresh()"></balance>
     </div>
     <div [fxFlex]="'100%'" fxFlex.xs="100%" fxFlex.sm="100%">
-      <send></send>
+      <send (onSend)="onSend($event)"></send>
     </div>
     <div [fxFlex]="'100%'" fxFlex.xs="100%" fxFlex.sm="100%">
       <transactions  [transactions]="getTransaction()"></transactions>

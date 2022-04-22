@@ -44,7 +44,7 @@ export class TransactionsComponent
     transactions: Array<Transaction> = new Array<Transaction>();
 
     /**
-     * Initiaize a new instance of the BalanceComponent class.
+     * Initiaize a new instance of the TransactionsComponent class.
      */
     constructor()
     {

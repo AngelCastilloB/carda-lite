@@ -19,7 +19,7 @@
 
 /* IMPORTS *******************************************************************/
 
-import { Component, OnInit } from '@angular/core';
+import { Component }         from '@angular/core';
 import { WalletService }     from '../../services/wallet.service'
 import { BlockfrostService } from '../../services/blockfrost.service';
 import { Transaction }       from 'src/app/models/transaction';
@@ -40,22 +40,13 @@ export class AppComponent
     _wallet:          any     = null;
     _currentBalance:  number  = 0;
     _transactions:    Array<Transaction> = new Array<Transaction>();
+    _utxos:           Array<any>         = new Array<any>();
 
     /**
-     * Initiaize a new instance of the WalletService class.
+     * Initiaize a new instance of the AppComponent class.
      */
     constructor(private _walletService: WalletService, private _blockfrostService: BlockfrostService)
-    {/*
-      let seed = _walletService.createSeedPhrases();
-      console.log(seed);
-
-      console.log(_walletService.create("ginger tobacco ignore sheriff jelly clean leisure century cheese light lend attitude quality blur cage outer census earn visual hour leader special budget logic"));
-      _blockfrostService.getLatestProtocolParameters().subscribe((x)=> console.log(x));
-
-      _blockfrostService.getAddressUtxos("addr_test1qp8x8l9ldlmhf5s285fa2g74k0wfjskqztvqw7vda2x54qzwa5e343pw7w8d2d3sqh4uv7303r29mugnlj6uewhrcyvqr20x50").subscribe((x)=> console.log(x));
-      _blockfrostService.getAddressBalance("addr_test1qp8x8l9ldlmhf5s285fa2g74k0wfjskqztvqw7vda2x54qzwa5e343pw7w8d2d3sqh4uv7303r29mugnlj6uewhrcyvqr20x50").subscribe((x)=> console.log(x));
-      _blockfrostService.getTransactions("addr_test1qp8x8l9ldlmhf5s285fa2g74k0wfjskqztvqw7vda2x54qzwa5e343pw7w8d2d3sqh4uv7303r29mugnlj6uewhrcyvqr20x50").subscribe((x)=> console.log(x));
-    */
+    {
     }
 
     /**
@@ -89,9 +80,22 @@ export class AppComponent
       {
         this._blockfrostService.getAddressBalance(this._wallet.paymentAddress).subscribe((x)=> this._currentBalance = x);
         this._blockfrostService.getTransactions(this._wallet.paymentAddress).subscribe((x)=> this._transactions.push(x));
+        this._blockfrostService.getAddressUtxos(this._wallet.paymentAddress).subscribe((x)=> this._utxos = x);
       }
     }
 
+    /**
+     * Event handler for the sent event.
+     */
+    onSend(details: any)
+    {
+      let address = details.receivingAddress;
+      let amount  = details.Amount;
+
+      console.log(address);
+      console.log(amount);
+    }
+    
     /**
      * Event handler for the on logout event.
      */

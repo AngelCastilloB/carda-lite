@@ -1,0 +1,10 @@
+.full-width {
+  width: 60%;
+  margin-left: 20px;
+}
+
+.button-margin {
+  margin-top: 25px!important;
+  margin-left: 20px!important;
+  margin-bottom: 25px!important;
+}

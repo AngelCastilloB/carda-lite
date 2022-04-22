@@ -29,7 +29,7 @@ const LOVELACE_IN_ADA:    number = 1000000;
 /* EXPORTS *******************************************************************/
 
 /**
- * Main application component.
+ * Balance component.
  */
 @Component({
   selector: 'balance',
