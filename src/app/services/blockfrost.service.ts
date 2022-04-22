@@ -151,12 +151,15 @@ export class BlockfrostService
    */
   public submitTransaction(cbor: any) : Observable<any>
   {
-    return this._httpClient.post(`${environment.blockfrostEndpoint}\/tx/submit`, cbor, {
-      headers: new HttpHeaders({
-        'Content-Type': 'application/cbor',
-        'project_id':  environment.blockfrost.projectId
-      })
+    const headersList = new HttpHeaders({
+      'Content-Type': 'application/cbor',
+      'project_id':  environment.blockfrost.projectId
     });
+
+    // As per blockfrost documentation, we must sent the cbor in binary format in a raw body.
+    const body = new Uint8Array(this.fromHex(cbor)).buffer;
+   
+    return this._httpClient.post(`${environment.blockfrostEndpoint}\/tx/submit`, body , { headers: headersList });
   }
      
   /**
@@ -200,4 +203,17 @@ export class BlockfrostService
 
     return throwError(`${error.error.msg}`);
   }
+
+  /**
+   * Converts a hexadecimal string into a byte buffer.
+   * 
+   * @param hex the string to be converted.
+   * 
+   * @returns The byte array.
+   */
+     private fromHex(hex: any)
+     {
+       return Buffer.from(hex, "hex");
+     }
+   
 }

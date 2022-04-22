@@ -229,7 +229,6 @@ export class WalletService
     console.log("total outputs: " + outputs.len());
     for (let i = 0; i < outputs.len(); i++)
       txBuilder.add_output(outputs.get(i));
-
   
     const changeMultiAssets = change.multiasset();
 
@@ -365,18 +364,6 @@ export class WalletService
       .max_value_size(parseInt(params.maxValSize))
       .max_tx_size(params.maxTxSize)
       .build());
-  }
-
-  /**
-   * Converts a hexadecimal string into a byte buffer.
-   * 
-   * @param hex the string to be converted.
-   * 
-   * @returns The byte array.
-   */
-  private fromHex(hex: any)
-  {
-    return Buffer.from(hex, "hex");
   }
 
   /**

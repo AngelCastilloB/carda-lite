@@ -52,7 +52,6 @@ export class AppComponent
      */
     constructor(private _walletService: WalletService, private _blockfrostService: BlockfrostService, public dialog: MatDialog)
     {
-      this._blockfrostService.submitTransaction("84a30082825820bfb2eae65b137f043bd17c981240d68797071a0e210eb6b2ed340e97b29c8f3900825820729d96d69ade456da5e0c42fd81b9e4792a7dcf3abad64f06570ddc805f3905f000182825839004e63fcbf6ff774d20a3d13d523d5b3dc9942c012d807798dea8d4a804eed331ac42ef38ed5363005ebc67a2f88d45df113fcb5ccbae3c1181a05f5e100825839004e63fcbf6ff774d20a3d13d523d5b3dc9942c012d807798dea8d4a804eed331ac42ef38ed5363005ebc67a2f88d45df113fcb5ccbae3c1181a36d37f5b021a000296a5a1008182582045b6303466fb162d81fe2943db5ab2c6eb7d1dbfcb40cbb6d2d9c8d4c8e65bf65840b71a47d3113e77e2a6ace4771d353941b60e99ae8c5eccc11f437568386f27da257059d53a2c955d8b7aa7b70cc9753510d8fa82808c9abf3832fbe59cbf1b0df5f6").subscribe((x)=> console.log(x));
     }
 
     /**
@@ -107,7 +106,7 @@ export class AppComponent
       let amount  = details.Amount;
 
       let transaction = await this._walletService.buildTransaction(this._wallet, address, amount, this._params, this._utxos);
-      console.log(transaction);
+      let transactionId = this._blockfrostService.submitTransaction(transaction).subscribe((x)=> console.log(x));
      }
     
     /**
