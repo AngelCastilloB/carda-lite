@@ -8,7 +8,7 @@ export const environment = {
   cardanoScanIo: 'https://testnet.cardanoscan.io/transaction',
   networkId: "testnet",
   blockfrost: {
-    projectId: "",
+    projectId: "testnetozfiHqTtDYvfiwgG4PQmRyt5E3tBJVDs",
     isTestnet: true
   }
 };

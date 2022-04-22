@@ -28,6 +28,7 @@ import { HeaderComponent, SeedDialog } from './components/header/header.componen
 import { BalanceComponent }            from './components/balance/balance.component';
 import { ReceiveComponent }            from './components/receive/receive.component';
 import { TransactionsComponent }       from './components/transactions/transactions.component';
+import { SendComponent }               from './components/send/send.component';
 import { BrowserAnimationsModule }     from '@angular/platform-browser/animations';
 import { WalletService }               from './services/wallet.service'
 import { BlockfrostService }           from './services/blockfrost.service'
@@ -41,6 +42,7 @@ import { MatInputModule }              from '@angular/material/input'
 import { MatDialogModule }             from '@angular/material/dialog'
 import { FlexLayoutModule }            from '@angular/flex-layout'
 import { QRCodeModule }                from 'angular2-qrcode';
+import {AutosizeModule}                from '@techiediaries/ngx-textarea-autosize';
 
 /* EXPORTS ********************************************************************/
 
@@ -54,7 +56,8 @@ import { QRCodeModule }                from 'angular2-qrcode';
     SeedDialog,
     BalanceComponent,
     ReceiveComponent,
-    TransactionsComponent
+    TransactionsComponent,
+    SendComponent
   ],
   imports: [
     BrowserModule,
@@ -70,7 +73,8 @@ import { QRCodeModule }                from 'angular2-qrcode';
     MatInputModule,
     MatDialogModule,
     FlexLayoutModule,
-    QRCodeModule
+    QRCodeModule,
+    AutosizeModule
   ],
   providers: [WalletService, BlockfrostService],
   bootstrap: [AppComponent]

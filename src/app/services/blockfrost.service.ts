@@ -153,6 +153,7 @@ export class BlockfrostService
     return this._httpClient.get(`${environment.blockfrostEndpoint}\/${endpoint}`, {
       headers: new HttpHeaders({
         'project_id':  environment.blockfrost.projectId,
+        'order': 'desc'
       })
     });
   }

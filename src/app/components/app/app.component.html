@@ -11,7 +11,9 @@
       <p class="message-margin">Enter the 24-word wallet mnemonic seed phrase to unlock the wallet.</p>
       <form>
         <mat-form-field class="full-width">
-          <input #seed matInput placeholder="24-word wallet mnemonic" value="">
+          <mat-label>24-word wallet mnemonic</mat-label>
+          <br>
+          <textarea #seed matInput rows="1" style="height: 50px;" autosize></textarea>
         </mat-form-field>
       </form>
     </mat-card-content>
@@ -26,7 +28,7 @@
       <balance  [currentBalance]="_currentBalance" (onRefresh)="onWallteRefresh()"></balance>
     </div>
     <div [fxFlex]="'100%'" fxFlex.xs="100%" fxFlex.sm="100%">
-      <receive  [address]="'test'"></receive>
+      <send></send>
     </div>
     <div [fxFlex]="'100%'" fxFlex.xs="100%" fxFlex.sm="100%">
       <transactions  [transactions]="getTransaction()"></transactions>
@@ -36,4 +38,7 @@
     </div>
   </div>
 </div>
+<br>
+<br>
+<br>
 
