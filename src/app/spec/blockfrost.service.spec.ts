@@ -30,9 +30,9 @@ import { Transaction }                      from '../models/transaction';
 /* TESTS *********************************************************************/
 
 /**
- * Unit tests for the WalletService class.
+ * Unit tests for the BlockfrostService class.
  */
-describe('WalletService', () =>
+describe('BlockfrostService', () =>
 {
   beforeEach(() => {
     TestBed.configureTestingModule({

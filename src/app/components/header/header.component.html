@@ -2,7 +2,8 @@
   <div class="toolbar-content">
     <span>Carda Lite</span>
     <span class="spacer"></span>
-    <button mat-raised-button class="button-right" (click)="openDialog()">Create Wallet</button>
+    <button *ngIf="!isWalletUnlocked" mat-raised-button class="button-right" (click)="openDialog()">Create Wallet</button>
+    <button *ngIf="isWalletUnlocked" mat-raised-button class="button-right" (click)="logout()">Logout</button>
   </div>
 </mat-toolbar>
 

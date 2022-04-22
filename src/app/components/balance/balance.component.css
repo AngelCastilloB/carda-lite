@@ -1,0 +1,13 @@
+.align-right {
+  float: right;
+  margin-right: 15px;
+}
+
+.balance{
+  color: #3f51b5;
+  font-weight: 500;
+  font-size: 1.2rem;
+  margin-top: 30px;
+  padding-top: 10px;  
+  padding-left: 15px;
+}

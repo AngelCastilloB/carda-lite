@@ -22,7 +22,6 @@
 import { Component }         from '@angular/core';
 import { WalletService }     from '../../services/wallet.service'
 import { BlockfrostService } from '../../services/blockfrost.service';
-import { Wallet }            from 'src/app/models/wallet';
 
 /* EXPORTS ********************************************************************/
 
@@ -36,8 +35,9 @@ import { Wallet }            from 'src/app/models/wallet';
 })
 export class AppComponent
 {
-    _wallet: any = null;
+    _wallet:         any    = null;
     _currentBalance: number = 0;
+
     /**
      * Initiaize a new instance of the WalletService class.
      */
@@ -71,5 +71,30 @@ export class AppComponent
       {
         console.log("Invalid");// show invalid message
       }
+    }
+
+    /**
+     * Event handler for the wallet refresh event.
+     */
+    onWallteRefresh()
+    {
+      this._currentBalance += 2000000;
+    }
+
+    /**
+     * Event handler for the on logout event.
+     */
+    onLogout()
+    {
+      this._wallet = null;
+      this._currentBalance = 0;
+    }
+
+    /**
+     * Gets whether ther eis a wallet currently unlocked.
+     */
+    isWalletUnlocked()
+    {
+      return this._wallet !== null;
     }
 }

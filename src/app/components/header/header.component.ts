@@ -19,9 +19,10 @@
 
 /* IMPORTS *******************************************************************/
  
-import { Component, Inject }                       from '@angular/core';
 import { WalletService }                           from 'src/app/services/wallet.service';
 import { MatDialog, MatDialogRef, MAT_DIALOG_DATA} from '@angular/material/dialog';
+import { Component, Inject, Input,
+         Output, EventEmitter }                    from '@angular/core';
 
 /* EXPORTS ********************************************************************/
 
@@ -35,6 +36,12 @@ import { MatDialog, MatDialogRef, MAT_DIALOG_DATA} from '@angular/material/dialo
 })
 export class HeaderComponent
 {
+  @Input()
+  isWalletUnlocked:boolean = true;
+
+  @Output()
+  onLogout:EventEmitter<void> =new EventEmitter<void>();
+  
   /**
    * Initiaize a new instance of the HeaderComponent class.
    */
@@ -53,6 +60,14 @@ export class HeaderComponent
       data: this._service.createSeedPhrases()
     });
   }
+
+  /**
+   * Opens the diaglos showing the seed phrase.
+   */
+   logout(): void
+   {
+     this.onLogout.emit();
+   }
 }
 
 /* DIALOG ********************************************************************/
@@ -71,7 +86,7 @@ export class SeedDialog
    */
   constructor(
     public dialogRef: MatDialogRef<SeedDialog>,
-    @Inject(MAT_DIALOG_DATA) public seeds: string) {}
+    @Inject(MAT_DIALOG_DATA)public seeds: string) {}
 
   /**
    * Closes the dialod.

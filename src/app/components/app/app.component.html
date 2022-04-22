@@ -1,8 +1,8 @@
-<app-header></app-header>
+<app-header [isWalletUnlocked]="isWalletUnlocked()" (onLogout)="onLogout()"></app-header>
 <br><br>
 <br><br>
 <br><br>
-<div *ngIf='_wallet=== null' class="content">
+<div *ngIf='_wallet === null' class="content">
   <mat-card class="example-card">
     <mat-card-header>
       <mat-card-title>Mnemonic Seed</mat-card-title>
@@ -20,25 +20,12 @@
     </mat-card-actions>
   </mat-card>
 </div>
-<div *ngIf='_wallet!== null' class="content">
+<div *ngIf='_wallet !== null' class="content">
   <div fxLayout="row wrap" fxLayoutGap="16px grid">
-    <div [fxFlex]="'50%'" fxFlex.xs="100%" fxFlex.sm="33%">
-      <mat-card class="mat-elevation-z4">
-        <mat-card-header>
-          <mat-card-title>Available Balance</mat-card-title>
-        </mat-card-header>
-        <mat-card-content>
-          <p>
-            {{_currentBalance / 1000000}}
-          </p>
-        </mat-card-content>
-        <mat-card-actions>
-          <button mat-button>LIKE</button>
-          <button mat-button>SHARE</button>
-        </mat-card-actions>
-      </mat-card>
+    <div [fxFlex]="'50%'" fxFlex.xs="100%" fxFlex.sm="100%">
+      <balance  [currentBalance]="_currentBalance" (onRefresh)="onWallteRefresh()"></balance>
     </div>
-    <div [fxFlex]="'50%'" fxFlex.xs="100%" fxFlex.sm="33%">
+    <div [fxFlex]="'50%'" fxFlex.xs="100%" fxFlex.sm="100%">
       <mat-card class="mat-elevation-z4">
         <mat-card-header>
           <mat-card-title>Send</mat-card-title>
@@ -53,7 +40,7 @@
         </mat-card-actions>
       </mat-card>
     </div>
-    <div [fxFlex]="'50%'" fxFlex.xs="100%" fxFlex.sm="33%">
+    <div [fxFlex]="'50%'" fxFlex.xs="100%" fxFlex.sm="100%">
       <mat-card class="mat-elevation-z4">
         <mat-card-header>
           <mat-card-title>Transactions</mat-card-title>
@@ -68,7 +55,7 @@
         </mat-card-actions>
       </mat-card>
     </div>
-    <div [fxFlex]="'50%'" fxFlex.xs="100%" fxFlex.sm="33%">
+    <div [fxFlex]="'50%'" fxFlex.xs="100%" fxFlex.sm="100%">
       <mat-card class="mat-elevation-z4">
         <mat-card-header>
           <mat-card-title>Receive</mat-card-title>

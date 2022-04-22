@@ -25,6 +25,7 @@ import { HttpClientModule }            from '@angular/common/http';
 import { AppRoutingModule }            from './app-routing.module';
 import { AppComponent }                from './components/app/app.component';
 import { HeaderComponent, SeedDialog } from './components/header/header.component';
+import { BalanceComponent }            from './components/balance/balance.component';
 import { BrowserAnimationsModule }     from '@angular/platform-browser/animations';
 import { WalletService }               from './services/wallet.service'
 import { BlockfrostService }           from './services/blockfrost.service'
@@ -47,7 +48,8 @@ import { FlexLayoutModule }            from '@angular/flex-layout'
   declarations: [
     AppComponent,
     HeaderComponent,
-    SeedDialog
+    SeedDialog,
+    BalanceComponent
   ],
   imports: [
     BrowserModule,
