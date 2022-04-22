@@ -1,0 +1,17 @@
+.address{
+  color: #3f51b5;
+  font-weight: 500;
+  font-size: 1.0rem;
+  margin-top: 10px;
+  padding-top: 10px;  
+  padding-left: 15px;
+  word-wrap:break-word;
+  text-align: center;
+}
+
+.center {
+  width: 50%;
+  display: flex;
+  justify-content: center;
+  margin: auto;
+}

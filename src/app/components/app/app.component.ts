@@ -97,4 +97,12 @@ export class AppComponent
     {
       return this._wallet !== null;
     }
+
+    /**
+     * Gets the payment address of this wallet.
+     */
+    getAddress()
+    {
+      return this._wallet.paymentAddress;
+    }
 }

@@ -108,7 +108,7 @@ describe('BalanceComponent', () =>
         expect(actual).toEqual(expected);
     });
 
-    it('There must be a button with the label refresh', (): void =>
+    it('there must be a button with the label refresh', (): void =>
     {
         // Arrange
         const cssSelector: string = 'button';
@@ -123,7 +123,7 @@ describe('BalanceComponent', () =>
         expect(actual).toEqual(expected);
     });
 
-    it('Refresh event must be emitted when the refresh button is clicked', (): void =>
+    it('refresh event must be emitted when the refresh button is clicked', (): void =>
     {
         // Arrange
         fixture.detectChanges();

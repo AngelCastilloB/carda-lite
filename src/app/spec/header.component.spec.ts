@@ -96,7 +96,7 @@ describe('HeaderComponent', () =>
         expect(actual).toEqual(expected);
     });
 
-    it('Logout event must be emitted when the Logout button is clicked', (): void =>
+    it('logout event must be emitted when the Logout button is clicked', (): void =>
     {
         // Arrange
         component.isWalletUnlocked = true;

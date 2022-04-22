@@ -26,6 +26,7 @@ import { AppRoutingModule }            from './app-routing.module';
 import { AppComponent }                from './components/app/app.component';
 import { HeaderComponent, SeedDialog } from './components/header/header.component';
 import { BalanceComponent }            from './components/balance/balance.component';
+import { ReceiveComponent }            from './components/receive/receive.component';
 import { BrowserAnimationsModule }     from '@angular/platform-browser/animations';
 import { WalletService }               from './services/wallet.service'
 import { BlockfrostService }           from './services/blockfrost.service'
@@ -38,6 +39,7 @@ import { MatFormFieldModule }          from '@angular/material/form-field'
 import { MatInputModule }              from '@angular/material/input'
 import { MatDialogModule }             from '@angular/material/dialog'
 import { FlexLayoutModule }            from '@angular/flex-layout'
+import { QRCodeModule }                from 'angular2-qrcode';
 
 /* EXPORTS ********************************************************************/
 
@@ -49,7 +51,8 @@ import { FlexLayoutModule }            from '@angular/flex-layout'
     AppComponent,
     HeaderComponent,
     SeedDialog,
-    BalanceComponent
+    BalanceComponent,
+    ReceiveComponent
   ],
   imports: [
     BrowserModule,
@@ -64,7 +67,8 @@ import { FlexLayoutModule }            from '@angular/flex-layout'
     MatFormFieldModule,
     MatInputModule,
     MatDialogModule,
-    FlexLayoutModule
+    FlexLayoutModule,
+    QRCodeModule
   ],
   providers: [WalletService, BlockfrostService],
   bootstrap: [AppComponent]
