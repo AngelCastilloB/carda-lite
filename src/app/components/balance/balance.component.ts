@@ -21,12 +21,12 @@
 
 import { Component, EventEmitter, Input, Output } from '@angular/core';
 
-/* CONSTANTS **********************************************************************************************************/
+/* CONSTANTS *****************************************************************/
 
 const ADA_DECIMAL_POINTS: number = 6;
 const LOVELACE_IN_ADA:    number = 1000000;
 
-/* EXPORTS ********************************************************************/
+/* EXPORTS *******************************************************************/
 
 /**
  * Main application component.

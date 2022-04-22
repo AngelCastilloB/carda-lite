@@ -182,12 +182,14 @@ describe('BlockfrostService', () =>
       (service: BlockfrostService, backend: HttpTestingController) => {
 
           // Arrange
-          const address                = 'addr_test1qp8x8l9ldlmhf5s285fa2g74k0wfjskqztvqw7vd…5e343pw7w8d2d3sqh4uv7303r29mugnlj6uewhrcyvqr20x50';
-          const txId                   = "000000000000000000000000000000000000";
-          const expectedUrl            = environment.blockfrostEndpoint + `/addresses/${address}/transactions`;
-          const expectedUrlDetails     = environment.blockfrostEndpoint + `/txs/${txId}`;
-          const dummyResponse          = [{ tx_hash: txId }];
-          const txDetailsDummyResponse = { output_amount: [{unit: "lovelace", quantity: 0}], hash: txId, index: 0,  block_height: 0, block_time: 0, amount: 0, fees: 0.0 };
+          const address                 = 'addr_test1qp8x8l9ldlmhf5s285fa2g74k0wfjskqztvqw7vd…5e343pw7w8d2d3sqh4uv7303r29mugnlj6uewhrcyvqr20x50';
+          const txId                    = "000000000000000000000000000000000000";
+          const expectedUrl             = environment.blockfrostEndpoint + `/addresses/${address}/transactions`;
+          const expectedUrlDetails      = environment.blockfrostEndpoint + `/txs/${txId}`;
+          const expectedUrlUtxosDetails = environment.blockfrostEndpoint + `/txs/${txId}/utxos`;
+          const dummyResponse           = [{ tx_hash: txId }];
+          const txDetailsDummyResponse  = { output_amount: [{unit: "lovelace", quantity: 0}], hash: txId, index: 0,  block_height: 0, block_time: 0, amount: 0, fees: 0.0 };
+          const txUtxosDummyResponse    = {inputs: [{address:"", amount: [{unit: "lovelace", quantity: 0}]}], outputs: [{address:"", amount: [{unit: "lovelace", quantity: 0}]}]}
 
           let responseTxs: any = {};
 
@@ -209,9 +211,15 @@ describe('BlockfrostService', () =>
 
           tick();
 
+          const requestWrapperUtxosDetails = backend.expectOne({url: expectedUrlUtxosDetails});
+          requestWrapperUtxosDetails.flush(txUtxosDummyResponse);
+
+          tick();
+
           // Assert
           expect(requestWrapperTxs.request.method).toEqual('GET');
           expect(requestWrapperDetails.request.method).toEqual('GET');
+          expect(requestWrapperUtxosDetails.request.method).toEqual('GET');
         }
       )
     ))
@@ -225,9 +233,11 @@ describe('BlockfrostService', () =>
           const txId                   = "000000000000000000000000000000000000";
           const expectedUrl            = environment.blockfrostEndpoint + `/addresses/${address}/transactions`;
           const expectedUrlDetails     = environment.blockfrostEndpoint + `/txs/${txId}`;
+          const expectedUrlUtxosDetails = environment.blockfrostEndpoint + `/txs/${txId}/utxos`;
           const transaction            = new Transaction(txId, 0, 0, 0, 0, 0.0);
           const dummyResponse          = [{ tx_hash: txId }];
           const txDetailsDummyResponse = { output_amount: [{unit: "lovelace", quantity: 0}], hash: txId, index: 0,  block_height: 0, block_time: 0, amount: 0, fees: 0.0 };
+          const txUtxosDummyResponse    = {inputs: [{address:"", amount: [{unit: "lovelace", quantity: 0}]}], outputs: [{address:"", amount: [{unit: "lovelace", quantity: 0}]}]}
 
           let responseTxs: any = {};
 
@@ -249,6 +259,100 @@ describe('BlockfrostService', () =>
 
           tick();
 
+          const requestWrapperUtxosDetails = backend.expectOne({url: expectedUrlUtxosDetails});
+          requestWrapperUtxosDetails.flush(txUtxosDummyResponse);
+
+          tick();
+          // Assert
+          expect(responseTxs).toEqual(transaction);
+        }
+      )
+    ))
+
+    it('#getTransactions should retrieve the correct negative net amount',
+    fakeAsync(inject( [BlockfrostService, HttpTestingController],
+      (service: BlockfrostService, backend: HttpTestingController) => {
+
+          // Arrange
+          const address                 = 'addr_test1qp8x8l9ldlmhf5s285fa2g74k0wfjskqztvqw7vd…5e343pw7w8d2d3sqh4uv7303r29mugnlj6uewhrcyvqr20x50';
+          const txId                    = "000000000000000000000000000000000000";
+          const expectedUrl             = environment.blockfrostEndpoint + `/addresses/${address}/transactions`;
+          const expectedUrlDetails      = environment.blockfrostEndpoint + `/txs/${txId}`;
+          const expectedUrlUtxosDetails = environment.blockfrostEndpoint + `/txs/${txId}/utxos`;
+          const transaction             = new Transaction(txId, 0, 0, 0, -900, 0.0);
+          const dummyResponse           = [{ tx_hash: txId }];
+          const txDetailsDummyResponse  = { output_amount: [{unit: "lovelace", quantity: 0}], hash: txId, index: 0,  block_height: 0, block_time: 0, amount: 0, fees: 0.0 };
+          const txUtxosDummyResponse    = {inputs: [{address:address, amount: [{unit: "lovelace", quantity: 1000}]}], outputs: [{address:address, amount: [{unit: "lovelace", quantity: 100}]}]}
+
+          let responseTxs: any = {};
+
+          service.getTransactions(address).subscribe(
+            (receivedResponse: any) => {
+              responseTxs = receivedResponse;
+            },
+            (error: any) => {}
+          );
+
+          // Act
+          const requestWrapperTxs = backend.expectOne({url: expectedUrl});
+          requestWrapperTxs.flush(dummyResponse);
+
+          tick();
+
+          const requestWrapperDetails = backend.expectOne({url: expectedUrlDetails});
+          requestWrapperDetails.flush(txDetailsDummyResponse);
+
+          tick();
+
+          const requestWrapperUtxosDetails = backend.expectOne({url: expectedUrlUtxosDetails});
+          requestWrapperUtxosDetails.flush(txUtxosDummyResponse);
+
+          tick();
+          // Assert
+          expect(responseTxs).toEqual(transaction);
+        }
+      )
+    ))
+
+    it('#getTransactions should retrieve the correct positive net amount',
+    fakeAsync(inject( [BlockfrostService, HttpTestingController],
+      (service: BlockfrostService, backend: HttpTestingController) => {
+
+          // Arrange
+          const address                = 'addr_test1qp8x8l9ldlmhf5s285fa2g74k0wfjskqztvqw7vd…5e343pw7w8d2d3sqh4uv7303r29mugnlj6uewhrcyvqr20x50';
+          const txId                   = "000000000000000000000000000000000000";
+          const expectedUrl            = environment.blockfrostEndpoint + `/addresses/${address}/transactions`;
+          const expectedUrlDetails     = environment.blockfrostEndpoint + `/txs/${txId}`;
+          const expectedUrlUtxosDetails = environment.blockfrostEndpoint + `/txs/${txId}/utxos`;
+          const transaction            = new Transaction(txId, 0, 0, 0, 9000, 0.0);
+          const dummyResponse          = [{ tx_hash: txId }];
+          const txDetailsDummyResponse = { output_amount: [{unit: "lovelace", quantity: 0}], hash: txId, index: 0,  block_height: 0, block_time: 0, amount: 0, fees: 0.0 };
+          const txUtxosDummyResponse   = {inputs: [{address:address, amount: [{unit: "lovelace", quantity: 1000}]}], outputs: [{address:address, amount: [{unit: "lovelace", quantity: 10000}]}]}
+
+          let responseTxs: any = {};
+
+          service.getTransactions(address).subscribe(
+            (receivedResponse: any) => {
+              responseTxs = receivedResponse;
+            },
+            (error: any) => {}
+          );
+
+          // Act
+          const requestWrapperTxs = backend.expectOne({url: expectedUrl});
+          requestWrapperTxs.flush(dummyResponse);
+
+          tick();
+
+          const requestWrapperDetails = backend.expectOne({url: expectedUrlDetails});
+          requestWrapperDetails.flush(txDetailsDummyResponse);
+
+          tick();
+
+          const requestWrapperUtxosDetails = backend.expectOne({url: expectedUrlUtxosDetails});
+          requestWrapperUtxosDetails.flush(txUtxosDummyResponse);
+
+          tick();
           // Assert
           expect(responseTxs).toEqual(transaction);
         }

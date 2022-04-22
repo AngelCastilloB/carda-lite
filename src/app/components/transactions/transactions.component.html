@@ -1,0 +1,29 @@
+  <mat-card class="mat-elevation-z4">
+    <mat-card-header>
+      <mat-card-title>Transactions</mat-card-title>
+    </mat-card-header>
+    <div *ngIf="transactions && transactions.length > 0" style="overflow-x:auto;">  
+      <table class='table'>  
+          <thead>  
+              <tr>  
+                  <th>Time</th>  
+                  <th>Explore</th>  
+                  <th>Total Output</th>  
+                  <th>Fee</th>  
+              </tr>  
+          </thead>  
+          <tbody>  
+              <tr *ngFor="let tx of transactions;">  
+                  <td>{{getDate(tx.blockTime)}}</td>  
+                  <td><a [href]="getCardanoScan(tx.txHash)">CardanoScan</a></td>  
+                  <td>{{getFormattedAmount(tx.outputAmount)}}  </td>  
+                  <td>{{getFormattedAmount(tx.fee)}}</td>  
+              </tr>  
+          </tbody>  
+       </table>  
+      </div>
+      <div *ngIf="transactions.length === 0">  
+        <p class="message">No Transactions Found<p> 
+      </div>
+      <br>
+  </mat-card>

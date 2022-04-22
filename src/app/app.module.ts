@@ -27,6 +27,7 @@ import { AppComponent }                from './components/app/app.component';
 import { HeaderComponent, SeedDialog } from './components/header/header.component';
 import { BalanceComponent }            from './components/balance/balance.component';
 import { ReceiveComponent }            from './components/receive/receive.component';
+import { TransactionsComponent }       from './components/transactions/transactions.component';
 import { BrowserAnimationsModule }     from '@angular/platform-browser/animations';
 import { WalletService }               from './services/wallet.service'
 import { BlockfrostService }           from './services/blockfrost.service'
@@ -52,7 +53,8 @@ import { QRCodeModule }                from 'angular2-qrcode';
     HeaderComponent,
     SeedDialog,
     BalanceComponent,
-    ReceiveComponent
+    ReceiveComponent,
+    TransactionsComponent
   ],
   imports: [
     BrowserModule,

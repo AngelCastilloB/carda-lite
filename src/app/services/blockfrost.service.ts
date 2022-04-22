@@ -24,7 +24,7 @@ import { environment }                                from 'src/environments/env
 import { HttpClient, HttpErrorResponse, HttpHeaders } from '@angular/common/http';
 import { NetworkParameters }                          from '../models/networkParameters';
 import { Observable, throwError, catchError, map,
-         pluck, mergeAll, mergeMap }                  from 'rxjs';
+         pluck, mergeAll, mergeMap, flatMap }         from 'rxjs';
 import { Transaction }                                from '../models/transaction';
 
 /* CONSTANTS ******************************************************************/
@@ -117,7 +117,28 @@ export class BlockfrostService
                {
                 let amount = result.output_amount.find((entry:any)=> entry.unit === "lovelace").quantity;
                 return new Transaction(result.hash, result.index, result.block_height, result.block_time, amount, result.fees);
-               }));
+               }))
+               .pipe(mergeMap((tx:Transaction) => this.sendRequest(`txs/${tx.txHash}/utxos`).pipe(map(result =>
+                {
+                  let totalInputAmount  = 0;
+                  let totalOutputAmount = 0;
+
+                  let inputs =  result.inputs.find((entry:any)=> entry.address === address);
+                  
+                  // If we found input coming from our wallet, we need to substract it.
+                  if (inputs !== undefined)
+                    totalInputAmount = inputs.amount.find((entry:any)=> entry.unit === "lovelace").quantity;
+
+                  let outputs =  result.outputs.find((entry:any)=> entry.address === address);
+
+                  // If we found output coming to our wallet, we need to add it.
+                  if (outputs !== undefined)
+                    totalOutputAmount = outputs.amount.find((entry:any)=> entry.unit === "lovelace").quantity;
+
+                  tx.outputAmount = totalOutputAmount - totalInputAmount;
+
+                  return tx;
+                }))));
   }
 
   /**

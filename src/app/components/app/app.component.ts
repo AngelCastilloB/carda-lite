@@ -19,9 +19,10 @@
 
 /* IMPORTS *******************************************************************/
 
-import { Component }         from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { WalletService }     from '../../services/wallet.service'
 import { BlockfrostService } from '../../services/blockfrost.service';
+import { Transaction }       from 'src/app/models/transaction';
 
 /* EXPORTS ********************************************************************/
 
@@ -37,6 +38,7 @@ export class AppComponent
 {
     _wallet:         any    = null;
     _currentBalance: number = 0;
+    _transactions:   Array<Transaction> = new Array<Transaction>();
 
     /**
      * Initiaize a new instance of the WalletService class.
@@ -65,7 +67,7 @@ export class AppComponent
       if (this._walletService.isValidMnemonic(seed))
       {
         this._wallet = this._walletService.create(seed);
-        this._blockfrostService.getAddressBalance(this._wallet.paymentAddress).subscribe((x)=> this._currentBalance = x);
+        this.onWallteRefresh();
       }
       else
       {
@@ -78,7 +80,14 @@ export class AppComponent
      */
     onWallteRefresh()
     {
-      this._currentBalance += 2000000;
+      this._currentBalance = 0;
+      this._transactions = new Array<Transaction>();
+
+      if (this._wallet !== null)
+      {
+        this._blockfrostService.getAddressBalance(this._wallet.paymentAddress).subscribe((x)=> this._currentBalance = x);
+        this._blockfrostService.getTransactions(this._wallet.paymentAddress).subscribe((x)=> this._transactions.push(x));
+      }
     }
 
     /**
@@ -88,6 +97,7 @@ export class AppComponent
     {
       this._wallet = null;
       this._currentBalance = 0;
+      this._transactions = new Array<Transaction>();
     }
 
     /**
@@ -104,5 +114,15 @@ export class AppComponent
     getAddress()
     {
       return this._wallet.paymentAddress;
+    }
+
+    /**
+     * Gets the list of transactions.
+     * 
+     * @returns The list of transactions.
+     */
+    getTransaction()
+    {
+      return this._transactions;
     }
 }

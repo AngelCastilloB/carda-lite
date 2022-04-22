@@ -1,5 +1,5 @@
 /**
- * @file balance.component.ts
+ * @file receive.component.ts
  *
  * @author Angel Castillo <angel.castillob@protonmail.com>
  * @date   Apr 20 2022
@@ -21,10 +21,10 @@
 
 import { Component, Input } from '@angular/core';
 
-/* EXPORTS ********************************************************************/
+/* EXPORTS *******************************************************************/
 
 /**
- * Main application component.
+ * Receive component.
  */
 @Component({
   selector: 'receive',
