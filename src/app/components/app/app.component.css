@@ -31,3 +31,9 @@
 .content > mat-card {
   margin-bottom: 16px;
 }
+
+.invalid-mnemonic {
+  margin-left: 20px;
+  color: rgb(240, 84, 84);
+  font-weight: 500;
+}

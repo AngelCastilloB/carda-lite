@@ -36,9 +36,10 @@ import { Transaction }       from 'src/app/models/transaction';
 })
 export class AppComponent
 {
-    _wallet:         any    = null;
-    _currentBalance: number = 0;
-    _transactions:   Array<Transaction> = new Array<Transaction>();
+    _isMnemonicValid: boolean = true;
+    _wallet:          any     = null;
+    _currentBalance:  number  = 0;
+    _transactions:    Array<Transaction> = new Array<Transaction>();
 
     /**
      * Initiaize a new instance of the WalletService class.
@@ -66,12 +67,13 @@ export class AppComponent
     {
       if (this._walletService.isValidMnemonic(seed))
       {
+        this._isMnemonicValid = true;
         this._wallet = this._walletService.create(seed);
         this.onWallteRefresh();
       }
       else
       {
-        console.log("Invalid");// show invalid message
+        this._isMnemonicValid = false;
       }
     }
 
