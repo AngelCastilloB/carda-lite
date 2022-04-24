@@ -4,7 +4,7 @@
 
 A very simple Cardano wallet written in TypeScript using Angular 13.
 
-The application uses the [Cardano Serialization Lib](https://github.com/emurgo/cardano-serialization-lib) to create and sign transactions and [Blockfrost](https://blockfrost.io/) to interact with the blockchain (Query address, TXs, UTXOs and to submit transactions to the blockchain).
+The application uses the [Cardano Serialization Lib](https://github.com/emurgo/cardano-serialization-lib) to create and sign transactions, and [Blockfrost](https://blockfrost.io/) to interact with the cardano blockchain (query address, TXs, UTXOs and to submit transactions to the blockchain).
 
 For simplicity's sake this application only work with the first derived payment address (single address mode similar to some browser wallets), also, the wallet only work with ADA (native assets are ignored, however they are taken into account correctly when building transactions).
 
@@ -24,7 +24,7 @@ With this application you can:
  * All folders should be lower case with "-" character as word separator.
  * All parts of the components should be name as follows name.component.ts|html|css|spec to represent those various files.
  * All components should have its own folder.
-    * The following structure must be followed inside the "client" folder:
+    * The following structure must be followed inside the "app" folder:
     ```
     app
     ├── components
