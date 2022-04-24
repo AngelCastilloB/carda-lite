@@ -19,11 +19,16 @@
 
 /* IMPORTS *******************************************************************/
 
-import { Component }                                     from '@angular/core';
+import { Component, ViewChild }                          from '@angular/core';
 import { ComponentFixture, TestBed, TestModuleMetadata } from '@angular/core/testing';
 import { HeaderComponent }                               from '../components/header/header.component';
 import { MatToolbarModule }                              from '@angular/material/toolbar'
 import { MatDialogModule }                               from '@angular/material/dialog'
+import { FormsModule }                                   from '@angular/forms';
+import { MatCardModule }                                 from '@angular/material/card';
+import { MatIconModule }                                 from '@angular/material/icon';
+import { MatInputModule }                                from '@angular/material/input';
+import { BrowserAnimationsModule }                       from '@angular/platform-browser/animations';
 
 /* TESTS *********************************************************************/
 
@@ -32,6 +37,8 @@ import { MatDialogModule }                               from '@angular/material
   <app-header [isWalletUnlocked]="isWalletUnlocked" (onLogout)="onLogout()"></app-header>
 </ng-container>`})
 class TestWrapperComponent {
+  @ViewChild('sendComponent', {static: true})
+    public headerComponent: HeaderComponent;
     public isWalletUnlocked: boolean = false;
     public eventTriggered:   boolean = false;
     public onLogout(): void {
@@ -45,7 +52,7 @@ describe('HeaderComponent', () =>
     const config: TestModuleMetadata =
     {
         declarations: [HeaderComponent, TestWrapperComponent],
-        imports: [MatToolbarModule, MatDialogModule]
+        imports: [MatCardModule, FormsModule, MatIconModule, MatInputModule, BrowserAnimationsModule, MatToolbarModule, MatDialogModule]
     };
 
     beforeEach(async () =>
@@ -112,5 +119,31 @@ describe('HeaderComponent', () =>
         // Assert
         const actual: boolean = component.eventTriggered;
         expect(actual).toBeTrue();
+    });
+
+    it('seed phrases must be displayed on a popup when the Create Wallet button is clicked', (): void =>
+    {
+        // Arrange
+        component.isWalletUnlocked = false;
+        fixture.detectChanges();
+
+        const cssSelector: string = 'button';
+        const button: HTMLSpanElement = fixture.nativeElement.querySelector(cssSelector);
+
+        // Act
+        button.click();
+        fixture.detectChanges();
+
+        const idSelector: string = 'seeds-div';
+        const div: HTMLSpanElement = (<HTMLElement>fixture.nativeElement).ownerDocument.getElementById(idSelector);
+        const actual: string = div.innerHTML.trim();
+
+        const closeSelector: string = 'close-button';
+        const closeButton: HTMLSpanElement = (<HTMLElement>fixture.nativeElement).ownerDocument.getElementById(closeSelector);
+        closeButton.click();
+        fixture.detectChanges();
+
+        // Assert
+        expect(actual.split(' ').length).toEqual(24);
     });
 });

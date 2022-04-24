@@ -117,6 +117,7 @@ export class AppComponent
       try
       {
         this._onMessageUpdate$.emit({type: ModalMessageType.Information, message: "Building transaction..."});
+
         let transaction = await this._walletService.buildTransaction(this._wallet, address, amount, this._params, this._utxos);
   
         this._onMessageUpdate$.emit({type: ModalMessageType.Information, message: "Signing transaction..."});

@@ -201,11 +201,10 @@ export class BlockfrostService
    */
   private handleError(error: HttpErrorResponse): Observable<never>
   {
-    console.log(error);
-
     if (error.error instanceof ErrorEvent)
     {
       console.error('An error occurred:', error.error.message);
+      return throwError(`${error.error.message}`);
     }
     else
     {

@@ -320,7 +320,7 @@ export class WalletService
    * 
    * @return The new output.
    */
-  createOutput(address: any, value: any, parameters: NetworkParameters)
+  createOutput(address: any, value: any, parameters: NetworkParameters) : CardanoSerialization.TransactionOutput
   {
     const v = value;
     const minAda = CardanoSerialization.min_ada_required(
@@ -342,7 +342,7 @@ export class WalletService
    * 
    * @returns The transaction builder.
    */
-  createTranscationBuilder(params: NetworkParameters)
+  createTranscationBuilder(params: NetworkParameters) : CardanoSerialization.TransactionBuilder
   {
     return CardanoSerialization.TransactionBuilder.new(
        CardanoSerialization.TransactionBuilderConfigBuilder.new()

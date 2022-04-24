@@ -20,7 +20,37 @@
 /* IMPORTS *******************************************************************/
 
 import { TestBed }       from '@angular/core/testing';
+import { NetworkParameters } from '../models/networkParameters';
 import { WalletService } from '../services/wallet.service';
+
+import * as CardanoSerialization from '@emurgo/cardano-serialization-lib-asmjs'
+import { Wallet } from '../models/wallet';
+
+/* UTIL FUNCTIONS ************************************************************/
+
+/**
+ * Converts a byte array to a hex string.
+ * 
+ * @param bytes The bytes to be encoded into a hex string.
+ * 
+ * @returns The byte array.
+ */
+const toHex = ((bytes: any) =>
+{
+  return Buffer.from(bytes).toString("hex");
+});
+
+/**
+ * Converts a hexadecimal string into a byte buffer.
+ * 
+ * @param hex the string to be converted.
+ * 
+ * @returns The byte array.
+ */
+const fromHex = ((hex: any)=>
+{
+  return Buffer.from(hex, "hex");
+});
 
 /* TESTS *********************************************************************/
 
@@ -164,5 +194,105 @@ describe('WalletService', () =>
     
     // Assert
     expect(actual).toEqual(expected);
+  });
+
+  it('#createTranscationBuilder should return a transaction builder from a set of network parameters ', () =>
+  {
+    // Arrange
+    const expected = "a300800180021a000f4240";
+    const dummyFee = "1000000";
+
+    let params: NetworkParameters = new NetworkParameters(
+            { minFeeA: "44", minFeeB: "155381" },
+            "1000000",
+            "500000000",
+            "34482",
+            "5000",
+            "1000000",
+            0.0577,
+            0.0000721,
+            16384);
+
+    // Act
+    const actual: CardanoSerialization.TransactionBuilder = _service.createTranscationBuilder(params);
+    actual.set_fee(CardanoSerialization.BigNum.from_str(dummyFee));
+    
+    // Assert
+    expect(toHex(actual.build().to_bytes())).toEqual(expected);
+  });
+
+  it('#createOutput should return a CDDL formatted output', () =>
+  {
+    // Arrange
+    const dummyAddress          = "addr_test1qp8x8l9ldlmhf5s285fa2g74k0wfjskqztvqw7vda2x54qzwa5e343pw7w8d2d3sqh4uv7303r29mugnlj6uewhrcyvqr20x50";
+    const dummmySerializedValue = "1a02625a00";
+    const expected              = "825839004e63fcbf6ff774d20a3d13d523d5b3dc9942c012d807798dea8d4a804eed331ac42ef38ed5363005ebc67a2f88d45df113fcb5ccbae3c1181a02625a00";
+
+    const value         = CardanoSerialization.Value.from_bytes(fromHex(dummmySerializedValue));
+    const targetAddress = CardanoSerialization.Address.from_bech32(dummyAddress);
+
+    let params: NetworkParameters = new NetworkParameters(
+            { minFeeA: "44", minFeeB: "155381" },
+            "1000000",
+            "500000000",
+            "34482",
+            "5000",
+            "1000000",
+            0.0577,
+            0.0000721,
+            16384);
+
+    // Act
+    let cddlOutput: CardanoSerialization.TransactionOutput = _service.createOutput(targetAddress, value, params);
+  
+    // Assert
+    expect(toHex(cddlOutput.to_bytes())).toEqual(expected);
+  });
+
+  it('#buildTransaction given valid parameters should return a CDDL formatted transaction', async () =>
+  {
+    // Arrange
+    const dummyAddress         = "addr_test1qp8x8l9ldlmhf5s285fa2g74k0wfjskqztvqw7vda2x54qzwa5e343pw7w8d2d3sqh4uv7303r29mugnlj6uewhrcyvqr20x50";
+    const dummmySerializedUtxo = "82825820091645e0a95479a4ae3bd7469b646a233cdf0ddefdad439bc50c386d813c9c7901825839004e63fcbf6ff774d20a3d13d523d5b3dc9942c012d807798dea8d4a804eed331ac42ef38ed5363005ebc67a2f88d45df113fcb5ccbae3c1181a2f03c633";
+    const dummyWallet          = new Wallet(null, dummyAddress);   
+    const amount               = 5000000; // In lovelace
+    const expected             = "84a30081825820091645e0a95479a4ae3bd7469b646a233cdf0ddefdad439bc50c386d813c9c79010182825839004e63fcbf6ff774d20a3d13d523d5b3dc9942c012d807798dea8d4a804eed331ac42ef38ed5363005ebc67a2f88d45df113fcb5ccbae3c1181a01ba8140825839004e63fcbf6ff774d20a3d13d523d5b3dc9942c012d807798dea8d4a804eed331ac42ef38ed5363005ebc67a2f88d45df113fcb5ccbae3c1181a2d46b47e021a00029075a0f5f6";
+
+    const utxos = [CardanoSerialization.TransactionUnspentOutput.from_bytes(fromHex(dummmySerializedUtxo))];
+
+    let params: NetworkParameters = new NetworkParameters(
+            { minFeeA: "44", minFeeB: "155381" },
+            "1000000",
+            "500000000",
+            "34482",
+            "5000",
+            "1000000",
+            0.0577,
+            0.0000721,
+            16384);
+
+    // Act
+    let cddlOutput: CardanoSerialization.Transaction = await _service.buildTransaction(dummyWallet, dummyAddress, amount, params, utxos);
+  
+    // Assert
+    expect(toHex(cddlOutput.to_bytes())).toEqual(expected);
+  });
+
+  it('#signTransaction given wallet and a unsigned transaction should return a signed CDDL formatted transaction', async () =>
+  {
+    // Arrange
+    const dummyUnsignTransaction = "84a30081825820091645e0a95479a4ae3bd7469b646a233cdf0ddefdad439bc50c386d813c9c79010182825839004e63fcbf6ff774d20a3d13d523d5b3dc9942c012d807798dea8d4a804eed331ac42ef38ed5363005ebc67a2f88d45df113fcb5ccbae3c1181a01ba8140825839004e63fcbf6ff774d20a3d13d523d5b3dc9942c012d807798dea8d4a804eed331ac42ef38ed5363005ebc67a2f88d45df113fcb5ccbae3c1181a2d46b47e021a00029075a0f5f6";
+    const dummySeedPhrases       = "ginger tobacco ignore sheriff jelly clean leisure century cheese light lend attitude quality blur cage outer census earn visual hour leader special budget logic";
+    const dummyWallet            = _service.create(dummySeedPhrases);   
+    const expected               = "84a30081825820091645e0a95479a4ae3bd7469b646a233cdf0ddefdad439bc50c386d813c9c79010182825839004e63fcbf6ff774d20a3d13d523d5b3dc9942c012d807798dea8d4a804eed331ac42ef38ed5363005ebc67a2f88d45df113fcb5ccbae3c1181a01ba8140825839004e63fcbf6ff774d20a3d13d523d5b3dc9942c012d807798dea8d4a804eed331ac42ef38ed5363005ebc67a2f88d45df113fcb5ccbae3c1181a2d46b47e021a00029075a1008182582045b6303466fb162d81fe2943db5ab2c6eb7d1dbfcb40cbb6d2d9c8d4c8e65bf65840c4772a97fa575dcde2ac622f7b11a5a008eb94dd5e4201ee2f59eaf78ed299f623f9e3ff8c790e23327064fa15837d863c7ab1cab79b0acb6852dd49ef384e06f5f6";
+
+    const transaction = CardanoSerialization.Transaction.from_bytes(fromHex(dummyUnsignTransaction));
+
+    // Act
+    let cddlOutput: CardanoSerialization.Transaction = await _service.signTransaction(dummyWallet, transaction);
+  
+    // Assert
+    expect(cddlOutput.is_valid()).toBeTrue();
+    expect(toHex(cddlOutput.to_bytes())).toEqual(expected);
   });
 });

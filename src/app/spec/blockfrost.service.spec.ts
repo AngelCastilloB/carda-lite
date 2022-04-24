@@ -201,6 +201,96 @@ describe('BlockfrostService', () =>
       )
     ))
 
+    it("#getTransaction should return empty when the backebd returns 404",
+    fakeAsync(inject( [BlockfrostService, HttpTestingController],
+      (service: BlockfrostService, backend: HttpTestingController) => {
+
+          // Arrange
+          const hash            = 'SOMEHASH';
+          const expectedUrl     = environment.blockfrostEndpoint + "/txs/" + hash;
+          const dummyResponse   = {};
+
+          let response: any = {};
+          service.getTransaction(hash).subscribe((x)=> response = x);
+
+          const requestWrapper = backend.expectOne({url: expectedUrl});
+
+          // Act
+          requestWrapper.flush("", { status: 404, statusText: "Not Found" });
+
+          tick();
+
+          // Assert
+          expect(response).toEqual('');
+        }
+      )
+    ))
+
+    it("must should handle gracefully http errors",
+    fakeAsync(inject( [BlockfrostService, HttpTestingController],
+      (service: BlockfrostService, backend: HttpTestingController) => {
+
+          // Arrange
+          const address         = 'addr_test1qp8x8l9ldlmhf5s285fa2g74k0wfjskqztvqw7vd…5e343pw7w8d2d3sqh4uv7303r29mugnlj6uewhrcyvqr20x50';
+          const expectedUrl     = environment.blockfrostEndpoint + `/addresses/${address}/transactions`;
+          const dummyResponse   = {};
+
+          let response: any = {};
+          
+          try
+          {
+            service.getTransactions(address).subscribe((x)=> response = x);
+
+            const requestWrapper = backend.expectOne({url: expectedUrl});
+
+            // Act
+            requestWrapper.flush({msg:"Error Details"}, { status: 404, statusText: "Not Found" });
+  
+            tick();
+          }
+          catch (error)
+          {
+              expect(error).toBe('Error Details')
+          }
+        }
+      )
+    ))
+
+    it("must should handle gracefully http errors (ErrorEvent)",
+    fakeAsync(inject( [BlockfrostService, HttpTestingController],
+      (service: BlockfrostService, backend: HttpTestingController) => {
+
+          // Arrange
+          const address         = 'addr_test1qp8x8l9ldlmhf5s285fa2g74k0wfjskqztvqw7vd…5e343pw7w8d2d3sqh4uv7303r29mugnlj6uewhrcyvqr20x50';
+          const expectedUrl     = environment.blockfrostEndpoint + `/addresses/${address}/transactions`;
+          const dummyResponse   = {};
+
+          let response: any = {};
+          
+          try
+          {
+            service.getTransactions(address).subscribe((x)=> response = x);
+
+            const requestWrapper = backend.expectOne({url: expectedUrl});
+
+            // Act
+            requestWrapper.flush(new ErrorEvent('Error', {
+              error : new Error('Error Name'),
+              message : 'Error message',
+              lineno : 402,
+              filename : 'some_file.html'
+            }), { status: 404, statusText: "Not Found" });
+  
+            tick();
+          }
+          catch (error)
+          {
+              expect(error).toBe('Error message')
+          }
+        }
+      )
+    ))
+
     it('#getTransactions should call upon the correct endpoints',
     fakeAsync(inject( [BlockfrostService, HttpTestingController],
       (service: BlockfrostService, backend: HttpTestingController) => {

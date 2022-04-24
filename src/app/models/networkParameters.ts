@@ -29,14 +29,14 @@
     */
     constructor(
       public linearFee: any,
-      public minUtxo: string = "1000000",
+      public minUtxo: string,
       public poolDeposit: string,
       public keyDeposit: string,
       public coinsPerUtxoWord: string,
       public maxValSize: string,
       public priceMem: number,
       public priceStep: number,
-      public maxTxSize: number,)
+      public maxTxSize: number)
     {
     }  
  }

@@ -78,11 +78,11 @@ export class HeaderComponent
              <div mat-dialog-content>
                <p>The new wallet is created together with a mnemonic phrase. Write the mnemonic phrase down, you will need it to access your wallet. <b>Don’t copy it to your clipboard or save it anywhere online.</b></p>
                <br>
-               <div style="border: 2px solid red;border-radius: 5px;padding: 10px;">{{seeds}}</div>
+               <div id="seeds-div" style="border: 2px solid red;border-radius: 5px;padding: 10px;">{{seeds}}</div>
                <br>
              </div>
              <div mat-dialog-actions>
-               <button mat-raised-button class="button-right" color="primary" (click)="onCloseClick()">Close</button>
+               <button id="close-button" mat-raised-button class="button-right" color="primary" (click)="onCloseClick()">Close</button>
              </div>`,
 })
 export class SeedDialog
