@@ -401,10 +401,9 @@ describe('BlockfrostService', () =>
 
           tick();
 
-
           // Assert
           let array = [...new Uint8Array(requestWrapper.request.body)];
-          
+
           expect(array).toEqual(hash);
           expect(requestWrapper.request.method).toEqual('POST');
         }

@@ -55,7 +55,7 @@ export class SendComponent
      */
     onSendClick()
     {
-      this.onSend.emit({"receivingAddress": this._receivingAddress,"Amount": Math.floor(this._amount * LOVELACE_IN_ADA)});
+      this.onSend.emit({"receivingAddress": this._receivingAddress,"amount": Math.floor(this._amount * LOVELACE_IN_ADA)});
     }
 
     /**

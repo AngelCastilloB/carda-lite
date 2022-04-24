@@ -94,7 +94,7 @@ export class AppComponent
             return b.blockTime - a.blockTime;
           });
         });
-        
+
         this._blockfrostService.getAddressUtxos(this._wallet.paymentAddress)
           .pipe(mergeMap((result: any) => 
             from(Promise.all(result.map(async (utxo:any) => await CoinSelection.toUtxo(utxo, this._wallet.paymentAddress))))))
@@ -112,7 +112,7 @@ export class AppComponent
       this.openDialog("Sending Transaction", "The transaction is being sent.");
 
       let address = details.receivingAddress;
-      let amount  = details.Amount;
+      let amount  = details.amount;
 
       try
       {
