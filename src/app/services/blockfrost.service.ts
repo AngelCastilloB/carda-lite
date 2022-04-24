@@ -30,6 +30,7 @@ import { Transaction }                                from '../models/transactio
 /* CONSTANTS ******************************************************************/
 
 const MINT_UTXO_VALUE: string = "1000000";
+const ADA_TOKEN_NAME:  string = "lovelace";
 
 /* EXPORTS ********************************************************************/
 
@@ -83,7 +84,7 @@ export class BlockfrostService
   {
     return this.sendRequest(`addresses/${address}`)
                .pipe(catchError(this.handleError))
-               .pipe(map((result: any) => result.amount.find((entry:any)=> entry.unit === "lovelace").quantity));
+               .pipe(map((result: any) => result.amount.find((entry:any)=> entry.unit === ADA_TOKEN_NAME).quantity));
   }
 
   /**
@@ -129,7 +130,7 @@ export class BlockfrostService
                .pipe(mergeMap(txId =>this.sendRequest(`txs/${txId}`)))
                .pipe(map((result: any) =>
                {
-                let amount = result.output_amount.find((entry:any)=> entry.unit === "lovelace").quantity;
+                let amount = result.output_amount.find((entry:any)=> entry.unit === ADA_TOKEN_NAME).quantity;
                 return new Transaction(result.hash, result.index, result.block_height, result.block_time, amount, result.fees);
                }))
                .pipe(mergeMap((tx:Transaction) => this.sendRequest(`txs/${tx.txHash}/utxos`).pipe(map(result =>
@@ -141,14 +142,14 @@ export class BlockfrostService
                   
                   // If we found input coming from our wallet, we need to substract it.
                   inputs.forEach(element => {
-                    totalInputAmount += parseInt(element.amount.find((entry:any)=> entry.unit === "lovelace").quantity);
+                    totalInputAmount += parseInt(element.amount.find((entry:any)=> entry.unit === ADA_TOKEN_NAME).quantity);
                   });
 
                   let outputs =  result.outputs.filter((entry:any)=> entry.address === address);
 
                   // If we found output coming to our wallet, we need to add it.
                   outputs.forEach(element => {
-                    totalOutputAmount += parseInt(element.amount.find((entry:any)=> entry.unit === "lovelace").quantity);
+                    totalOutputAmount += parseInt(element.amount.find((entry:any)=> entry.unit === ADA_TOKEN_NAME).quantity);
                   });
 
                   tx.outputAmount = totalOutputAmount - totalInputAmount;
@@ -223,9 +224,8 @@ export class BlockfrostService
    * 
    * @returns The byte array.
    */
-     private fromHex(hex: any)
-     {
-       return Buffer.from(hex, "hex");
-     }
-   
+  private fromHex(hex: any)
+  {
+    return Buffer.from(hex, "hex");
+  }
 }

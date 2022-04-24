@@ -1,10 +1,10 @@
 /**
  * @file information-animation.component.ts
  *
- * @author Angel Castillo <angel.castillo@horrocubes.io>
- * @date   Dec 10 2021
+ * @author Angel Castillo <angel.castillob@protonmail.com>
+ * @date   Apr 20 2022
  *
- * @copyright Copyright 2021 Horrocubes.
+ * @copyright Copyright 2022 Horrocubes.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.

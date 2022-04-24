@@ -217,11 +217,8 @@ export class WalletService
     , params));
 
     const transactionWitnessSet = CardanoSerialization.TransactionWitnessSet.new();
-    let
-    {
-      input,
-      change
-    } = CoinSelection.randomImprove(sourceUtxos, outputs, 8, []);
+
+    let {input, change } = CoinSelection.randomImprove(sourceUtxos, outputs, 8, []);
 
     input.forEach((utxo) =>
     {
@@ -232,7 +229,6 @@ export class WalletService
       );
     });
 
-    console.log("total outputs: " + outputs.len());
     for (let i = 0; i < outputs.len(); i++)
       txBuilder.add_output(outputs.get(i));
   

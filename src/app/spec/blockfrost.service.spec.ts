@@ -177,6 +177,30 @@ describe('BlockfrostService', () =>
       )
     ))
 
+    it('#getTransaction should call upon the correct endpoint',
+    fakeAsync(inject( [BlockfrostService, HttpTestingController],
+      (service: BlockfrostService, backend: HttpTestingController) => {
+
+          // Arrange
+          const hash            = 'SOMEHASH';
+          const expectedUrl     = environment.blockfrostEndpoint + "/txs/" + hash;
+          const dummyResponse   = {};
+
+          service.getTransaction(hash).subscribe();
+
+          const requestWrapper = backend.expectOne({url: expectedUrl});
+
+          // Act
+          requestWrapper.flush(dummyResponse);
+
+          tick();
+
+          // Assert
+          expect(requestWrapper.request.method).toEqual('GET');
+        }
+      )
+    ))
+
     it('#getTransactions should call upon the correct endpoints',
     fakeAsync(inject( [BlockfrostService, HttpTestingController],
       (service: BlockfrostService, backend: HttpTestingController) => {
@@ -355,6 +379,34 @@ describe('BlockfrostService', () =>
           tick();
           // Assert
           expect(responseTxs).toEqual(transaction);
+        }
+      )
+    ))
+
+    it('#submitTransaction should call upon the correct endpoint',
+    fakeAsync(inject( [BlockfrostService, HttpTestingController],
+      (service: BlockfrostService, backend: HttpTestingController) => {
+
+          // Arrange
+          const hash            = [0x1, 0x2, 0x3];
+          const expectedUrl     = environment.blockfrostEndpoint + "/tx/submit";
+          const dummyResponse   = {};
+
+          service.submitTransaction(hash).subscribe();
+
+          const requestWrapper = backend.expectOne({url: expectedUrl});
+
+          // Act
+          requestWrapper.flush(dummyResponse);
+
+          tick();
+
+
+          // Assert
+          let array = [...new Uint8Array(requestWrapper.request.body)];
+          
+          expect(array).toEqual(hash);
+          expect(requestWrapper.request.method).toEqual('POST');
         }
       )
     ))
