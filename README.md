@@ -10,12 +10,12 @@ For simplicity's sake this application only work with the first derived payment 
 
 With this application you can:
 
-- Create new wallets using BIP39 mnemonic codes.
-- Import wallets using BIP39 mnemonic codes.
-- See your receiving address (derived from the mnemonic codes. This is always the first derived payment key).
-- See your total balanace (in ADA).
-- See the latest 100 transactions made with the wallet payment key.
-- Send ADA to other wallets.
+ * Create new wallets using BIP39 mnemonic codes.
+ * Import wallets using BIP39 mnemonic codes.
+ * See your receiving address (derived from the mnemonic codes. This is always the first derived payment key).
+ * See your total balanace (in ADA).
+ *  See the latest 100 transactions made with the wallet payment key.
+ * Send ADA to other wallets.
 
 ## Conventions
 
@@ -52,13 +52,34 @@ With this application you can:
 ### Version control agreements
 
  * Commit often.
- * Use [Semantic Commit Messages](https://sparkbox.com/foundry/semantic_commit_messages)
+ * Use [Semantic Commit Messages](https://sparkbox.com/foundry/semantic_commit_messages).
  * Use Git branch naming and branch merging conventions:
      Release preparation branches must start with "release/".
      Feature, Issues, Bug branches must start with "feature/".
      Hotfix branches must start with "hotfix/".
 
 ## Environment
+
+### Blockfrost API keys
+
+This application is just a proof of concept, and is not meant to be hosted publicly anywhere, so I decided to just embeed the blockfrost API keys directly on the app, however, this is not recomended and if you chose to use this codebase, consider setting up your own backend and call blockfrost api from there.
+
+To set up blockfrost on the project, you need to edit the file "scr/app/environments/environment.ts" (or environment.prod.ts for production):
+
+```typescript
+export const environment = {
+  production: false,
+  blockfrostEndpoint: 'https://cardano-testnet.blockfrost.io/api/v0',
+  cardanoScanIo: 'https://testnet.cardanoscan.io/transaction',
+  networkId: "testnet",
+  blockfrost: {
+    projectId: "API_KEY",
+    isTestnet: true
+  }
+};
+```
+
+And fill in the relevant information (for mainnet or testnet).
 
 ### Development server
 
