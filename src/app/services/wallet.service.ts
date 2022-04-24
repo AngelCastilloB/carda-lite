@@ -154,7 +154,7 @@ export class WalletService
    * 
    * @returns The signed transaction.
    */
-  public signTransaction(wallet: Wallet, tx: CardanoSerialization.Transaction)
+  public async signTransaction(wallet: Wallet, tx: CardanoSerialization.Transaction): Promise<CardanoSerialization.Transaction>
   {  
     const txWitnessSet  = CardanoSerialization.TransactionWitnessSet.new();
     const vkeyWitnesses = CardanoSerialization.Vkeywitnesses.new();
@@ -165,7 +165,13 @@ export class WalletService
  
     txWitnessSet.set_vkeys(vkeyWitnesses);
 
-    return txWitnessSet;
+    const signedTx = CardanoSerialization.Transaction.new(
+      tx.body(),
+      txWitnessSet,
+      tx.auxiliary_data()
+    );
+
+    return signedTx;
   }
 
   /**
@@ -189,7 +195,7 @@ export class WalletService
    * 
    * @returns The transaction.
    */
-  async buildTransaction(wallet: Wallet, tarAddress: string, amount: number, params: NetworkParameters, sourceUtxos: any)
+  async buildTransaction(wallet: Wallet, tarAddress: string, amount: number, params: NetworkParameters, sourceUtxos: any): Promise<CardanoSerialization.Transaction>
   {
     CoinSelection.setProtocolParameters(
       params.minUtxo,
@@ -306,20 +312,7 @@ export class WalletService
     if (size > params.maxTxSize)
       throw new Error("MAX_SIZE_REACHED");
 
-      
-    let txVkeyWitnesses = this.signTransaction(wallet, tx);
-
-    transactionWitnessSet.set_vkeys(txVkeyWitnesses.vkeys());
-
-    const signedTx = CardanoSerialization.Transaction.new(
-      tx.body(),
-      transactionWitnessSet,
-      tx.auxiliary_data()
-    );
-
-    console.log("Full Tx Size", signedTx.to_bytes().length);
-
-    return this.toHex(signedTx.to_bytes());
+    return tx;
   }
 
   /**
@@ -364,17 +357,5 @@ export class WalletService
       .max_value_size(parseInt(params.maxValSize))
       .max_tx_size(params.maxTxSize)
       .build());
-  }
-
-  /**
-   * Converts a byte array to a hex string.
-   * 
-   * @param bytes The bytes to be encoded into a hex string.
-   * 
-   * @returns The byte array.
-   */
-  private toHex(bytes: any)
-  {
-    return Buffer.from(bytes).toString("hex");
   }
 }

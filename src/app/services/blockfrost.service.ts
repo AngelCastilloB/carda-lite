@@ -24,9 +24,8 @@ import { environment }                                from 'src/environments/env
 import { HttpClient, HttpErrorResponse, HttpHeaders } from '@angular/common/http';
 import { NetworkParameters }                          from '../models/networkParameters';
 import { Observable, throwError, catchError, map,
-         pluck, mergeAll, mergeMap, from }            from 'rxjs';
+         pluck, mergeAll, mergeMap, from, of }        from 'rxjs';
 import { Transaction }                                from '../models/transaction';
-import CoinSelection                                  from '../vendors/coinSelection.js'
 
 /* CONSTANTS ******************************************************************/
 
@@ -88,6 +87,20 @@ export class BlockfrostService
   }
 
   /**
+   * Return content of the requested transaction.
+   * 
+   * @param hash Hash of the requested transaction.
+   * 
+   * @returns The transaction.
+   */
+  public getTransaction(hash: string)
+  {
+    return this.sendRequest(`txs/${hash}`)
+              .pipe(catchError(val => of({hash:""})))
+              .pipe(pluck('hash'));
+  }
+     
+  /**
    * Gets the list of all UTXOS of the given address.
    * 
    * @param address The address tog et the UTXOS from.
@@ -97,8 +110,7 @@ export class BlockfrostService
   public getAddressUtxos(address: string)
   {
     return this.sendRequest(`addresses/${address}/utxos`)
-               .pipe(catchError(this.handleError))
-               .pipe(mergeMap((result: any) => from(Promise.all(result.map(async (utxo:any) => await CoinSelection.toUtxo(utxo, address))))));
+               .pipe(catchError(this.handleError));
   }
 
   /**
