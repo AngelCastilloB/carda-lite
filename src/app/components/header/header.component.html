@@ -1,0 +1,13 @@
+<mat-toolbar color="primary" [ngStyle]="{'height':'60px'}"  class="fixed-header" >
+  <div class="toolbar-content">
+    <span>Carda Lite</span>
+    <span class="spacer"></span>
+    <button *ngIf="!isWalletUnlocked" mat-raised-button class="button-right" (click)="openDialog()">Create Wallet</button>
+    <button *ngIf="isWalletUnlocked" mat-raised-button class="button-right" (click)="logout()">Logout</button>
+  </div>
+</mat-toolbar>
+
+
+
+
+

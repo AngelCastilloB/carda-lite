@@ -10,9 +10,9 @@ import {
   TransactionUnspentOutput,
   TransactionOutputs,
   Value,
-} from "./@emurgo/cardano-serialization-lib-browser/cardano_serialization_lib";
+} from '@emurgo/cardano-serialization-lib-asmjs'
 const BigInt = typeof window !== "undefined" && window.BigInt;
-import * as EmurgoSerialization from './@emurgo/cardano-serialization-lib-browser/cardano_serialization_lib'
+import * as EmurgoSerialization from '@emurgo/cardano-serialization-lib-asmjs'
 
 /**
  * BerryPool implementation of the __Random-Improve__ coin selection algorithm.
@@ -316,6 +316,7 @@ const CoinSelection = {
       let minAmount = EmurgoSerialization.Value.new(
         EmurgoSerialization.min_ada_required(
           change,
+          false,
           EmurgoSerialization.BigNum.from_str(protocolParameters.minUTxO)
         )
       );
@@ -350,6 +351,123 @@ const CoinSelection = {
       change: utxoSelection.amount.checked_sub(mergedOutputsAmounts),
     };
   },
+
+  /**
+   * Gets an UTXO from its josn representation.
+   * 
+   * @param output The output to be convereted.
+   * @param address The address.
+   * 
+   * @returns The utxo.
+   */
+   toUtxo: async (output, address) => { 
+     const paymentAddr = Buffer.from(EmurgoSerialization.Address.from_bech32(address).to_bytes()).toString('hex');
+ 
+     return EmurgoSerialization.TransactionUnspentOutput.new(
+       EmurgoSerialization.TransactionInput.new(
+         EmurgoSerialization.TransactionHash.from_bytes(
+           Buffer.from(output.tx_hash || output.txHash, 'hex')
+         ),
+         output.output_index || output.txId
+       ),
+ 
+       EmurgoSerialization.TransactionOutput.new(
+         EmurgoSerialization.Address.from_bytes(Buffer.from(paymentAddr, 'hex')),
+         await assetsFromJson(output.amount)
+       )
+     );
+   },
+       
+  /**
+   * Converts an asset from its blockfrost json representation to the standard format.
+   * 
+   * @param assets The assets to be converted.
+   * 
+   * @returns The assets in the standard format.
+   */
+   assetsFromJson: (assets) => { 
+     const multiAsset = EmurgoSerialization.MultiAsset.new();
+     const lovelace   = assets.find((asset) => asset.unit === 'lovelace');
+ 
+     const policies = [
+       ...new Set(
+         assets
+           .filter((asset) => asset.unit !== 'lovelace')
+           .map((asset) => asset.unit.slice(0, 56))
+       ),
+     ];
+ 
+     policies.forEach((policy) => 
+     {
+       const policyAssets = assets.filter((asset) => asset.unit.slice(0, 56) === policy);
+ 
+       const assetsValue = EmurgoSerialization.Assets.new();
+ 
+       policyAssets.forEach((asset) =>
+       {
+         assetsValue.insert(EmurgoSerialization.AssetName.new(Buffer.from(asset.unit.slice(56), 'hex')),
+           EmurgoSerialization.BigNum.from_str(asset.quantity));
+       });
+       
+       multiAsset.insert(
+         EmurgoSerialization.ScriptHash.from_bytes(Buffer.from(policy, 'hex')),
+         assetsValue
+       );
+     });
+ 
+     const value = EmurgoSerialization.Value.new(EmurgoSerialization.BigNum.from_str(lovelace ? lovelace.quantity : '0'));
+ 
+     if (assets.length > 1 || !lovelace)
+       value.set_multiasset(multiAsset);
+ 
+     return value;
+   }
+};
+
+/**
+ * Converts an asset from its blockfrost json representation to the standard format.
+ * 
+ * @param assets The assets to be converted.
+ * 
+ * @returns The assets in the standard format.
+ */
+ function assetsFromJson(assets)
+ { 
+  const multiAsset = EmurgoSerialization.MultiAsset.new();
+  const lovelace   = assets.find((asset) => asset.unit === 'lovelace');
+
+  const policies = [
+    ...new Set(
+      assets
+        .filter((asset) => asset.unit !== 'lovelace')
+        .map((asset) => asset.unit.slice(0, 56))
+    ),
+  ];
+
+  policies.forEach((policy) => 
+  {
+    const policyAssets = assets.filter((asset) => asset.unit.slice(0, 56) === policy);
+
+    const assetsValue = EmurgoSerialization.Assets.new();
+
+    policyAssets.forEach((asset) =>
+    {
+      assetsValue.insert(EmurgoSerialization.AssetName.new(Buffer.from(asset.unit.slice(56), 'hex')),
+        EmurgoSerialization.BigNum.from_str(asset.quantity));
+    });
+    
+    multiAsset.insert(
+      EmurgoSerialization.ScriptHash.from_bytes(Buffer.from(policy, 'hex')),
+      assetsValue
+    );
+  });
+
+  const value = EmurgoSerialization.Value.new(EmurgoSerialization.BigNum.from_str(lovelace ? lovelace.quantity : '0'));
+
+  if (assets.length > 1 || !lovelace)
+    value.set_multiasset(multiAsset);
+
+  return value;
 };
 
 /**
@@ -745,6 +863,7 @@ function isQtyFulfilled(
     let minAmount = EmurgoSerialization.Value.new(
       EmurgoSerialization.min_ada_required(
         cumulatedAmount,
+        false,
         EmurgoSerialization.BigNum.from_str(minUTxOValue.toString())
       )
     );

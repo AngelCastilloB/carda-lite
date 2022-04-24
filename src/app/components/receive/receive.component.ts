@@ -1,5 +1,5 @@
 /**
- * @file wallet.ts
+ * @file receive.component.ts
  *
  * @author Angel Castillo <angel.castillob@protonmail.com>
  * @date   Apr 20 2022
@@ -19,24 +19,27 @@
 
 /* IMPORTS *******************************************************************/
 
-import { PrivateKey } from '@emurgo/cardano-serialization-lib-asmjs'
+import { Component, Input } from '@angular/core';
 
 /* EXPORTS *******************************************************************/
 
 /**
- * @summary The Wallet model.
+ * Receive component.
  */
- export class Wallet
- {
-     /**
-      * Initiaize a new instance of the WalletService class.
-      * 
-      * @param paymentKey The payment key.
-      * @param paymentAddress The payment address.
-      */
-     constructor(
-         public paymentKey: PrivateKey,
-         public paymentAddress: string)
-     {
-     }
- }
+@Component({
+  selector: 'receive',
+  templateUrl: './receive.component.html',
+  styleUrls: ['./receive.component.css']
+})
+export class ReceiveComponent
+{
+    @Input()
+    address:string = "";
+
+    /**
+     * Initiaize a new instance of the ReceiveComponent class.
+     */
+    constructor()
+    {
+    }
+}

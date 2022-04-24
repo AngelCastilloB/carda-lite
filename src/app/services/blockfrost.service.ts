@@ -24,12 +24,13 @@ import { environment }                                from 'src/environments/env
 import { HttpClient, HttpErrorResponse, HttpHeaders } from '@angular/common/http';
 import { NetworkParameters }                          from '../models/networkParameters';
 import { Observable, throwError, catchError, map,
-         pluck, mergeAll, mergeMap }                  from 'rxjs';
+         pluck, mergeAll, mergeMap, from, of }        from 'rxjs';
 import { Transaction }                                from '../models/transaction';
 
 /* CONSTANTS ******************************************************************/
 
 const MINT_UTXO_VALUE: string = "1000000";
+const ADA_TOKEN_NAME:  string = "lovelace";
 
 /* EXPORTS ********************************************************************/
 
@@ -83,9 +84,23 @@ export class BlockfrostService
   {
     return this.sendRequest(`addresses/${address}`)
                .pipe(catchError(this.handleError))
-               .pipe(map((result: any) => result.amount.find((entry:any)=> entry.unit === "lovelace").quantity));
+               .pipe(map((result: any) => result.amount.find((entry:any)=> entry.unit === ADA_TOKEN_NAME).quantity));
   }
 
+  /**
+   * Return content of the requested transaction.
+   * 
+   * @param hash Hash of the requested transaction.
+   * 
+   * @returns The transaction.
+   */
+  public getTransaction(hash: string)
+  {
+    return this.sendRequest(`txs/${hash}`)
+              .pipe(catchError(val => of({hash:""})))
+              .pipe(pluck('hash'));
+  }
+     
   /**
    * Gets the list of all UTXOS of the given address.
    * 
@@ -96,7 +111,7 @@ export class BlockfrostService
   public getAddressUtxos(address: string)
   {
     return this.sendRequest(`addresses/${address}/utxos`)
-               .pipe(catchError(this.handleError))
+               .pipe(catchError(this.handleError));
   }
 
   /**
@@ -115,11 +130,51 @@ export class BlockfrostService
                .pipe(mergeMap(txId =>this.sendRequest(`txs/${txId}`)))
                .pipe(map((result: any) =>
                {
-                let amount = result.output_amount.find((entry:any)=> entry.unit === "lovelace").quantity;
+                let amount = result.output_amount.find((entry:any)=> entry.unit === ADA_TOKEN_NAME).quantity;
                 return new Transaction(result.hash, result.index, result.block_height, result.block_time, amount, result.fees);
-               }));
+               }))
+               .pipe(mergeMap((tx:Transaction) => this.sendRequest(`txs/${tx.txHash}/utxos`).pipe(map(result =>
+                {
+                  let totalInputAmount  = 0;
+                  let totalOutputAmount = 0;
+
+                  let inputs = result.inputs.filter((entry:any)=> entry.address === address);
+                  
+                  // If we found input coming from our wallet, we need to substract it.
+                  inputs.forEach(element => {
+                    totalInputAmount += parseInt(element.amount.find((entry:any)=> entry.unit === ADA_TOKEN_NAME).quantity);
+                  });
+
+                  let outputs =  result.outputs.filter((entry:any)=> entry.address === address);
+
+                  // If we found output coming to our wallet, we need to add it.
+                  outputs.forEach(element => {
+                    totalOutputAmount += parseInt(element.amount.find((entry:any)=> entry.unit === ADA_TOKEN_NAME).quantity);
+                  });
+
+                  tx.outputAmount = totalOutputAmount - totalInputAmount;
+                  return tx;
+                }))));
   }
 
+  /**
+   * Submit a transaction to blockfrost.
+   * 
+   * @returns The result of the request.
+   */
+  public submitTransaction(cbor: any) : Observable<any>
+  {
+    const headersList = new HttpHeaders({
+      'Content-Type': 'application/cbor',
+      'project_id':  environment.blockfrost.projectId
+    });
+
+    // As per blockfrost documentation, we must sent the cbor in binary format in a raw body.
+    const body = new Uint8Array(this.fromHex(cbor)).buffer;
+   
+    return this._httpClient.post(`${environment.blockfrostEndpoint}\/tx/submit`, body , { headers: headersList });
+  }
+     
   /**
    * Sends a http GET request to blockfrost.
    * 
@@ -132,6 +187,7 @@ export class BlockfrostService
     return this._httpClient.get(`${environment.blockfrostEndpoint}\/${endpoint}`, {
       headers: new HttpHeaders({
         'project_id':  environment.blockfrost.projectId,
+        'order': 'desc'
       })
     });
   }
@@ -145,11 +201,10 @@ export class BlockfrostService
    */
   private handleError(error: HttpErrorResponse): Observable<never>
   {
-    console.log(error);
-
     if (error.error instanceof ErrorEvent)
     {
       console.error('An error occurred:', error.error.message);
+      return throwError(`${error.error.message}`);
     }
     else
     {
@@ -159,5 +214,17 @@ export class BlockfrostService
     }
 
     return throwError(`${error.error.msg}`);
+  }
+
+  /**
+   * Converts a hexadecimal string into a byte buffer.
+   * 
+   * @param hex the string to be converted.
+   * 
+   * @returns The byte array.
+   */
+  private fromHex(hex: any)
+  {
+    return Buffer.from(hex, "hex");
   }
 }

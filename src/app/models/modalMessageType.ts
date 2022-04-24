@@ -1,8 +1,8 @@
 /**
- * @file wallet.ts
+ * @file modalMessageType.ts
  *
  * @author Angel Castillo <angel.castillob@protonmail.com>
- * @date   Apr 20 2022
+ * @date   Apr 20 2024
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -17,26 +17,16 @@
  * limitations under the License.
  */
 
-/* IMPORTS *******************************************************************/
-
-import { PrivateKey } from '@emurgo/cardano-serialization-lib-asmjs'
-
 /* EXPORTS *******************************************************************/
 
 /**
- * @summary The Wallet model.
+ * @summary The message types for the modal animations.
  */
- export class Wallet
+ export enum ModalMessageType
  {
-     /**
-      * Initiaize a new instance of the WalletService class.
-      * 
-      * @param paymentKey The payment key.
-      * @param paymentAddress The payment address.
-      */
-     constructor(
-         public paymentKey: PrivateKey,
-         public paymentAddress: string)
-     {
-     }
+    Error,
+    Information,
+    Success,
+    Waiting,
+    Warning
  }

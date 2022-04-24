@@ -5,6 +5,7 @@
 export const environment = {
   production: false,
   blockfrostEndpoint: 'https://cardano-testnet.blockfrost.io/api/v0',
+  cardanoScanIo: 'https://testnet.cardanoscan.io/transaction',
   networkId: "testnet",
   blockfrost: {
     projectId: "",
