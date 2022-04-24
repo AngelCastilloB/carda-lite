@@ -1,13 +1,12 @@
 
 # CardaLite
-[![build status](https://github.com/AngelCastilloB/carda-lite/workflows/Build/badge.svg)](https://github.com/AngelCastilloB/carda-lite::wq
-/actions)
+[![build status](https://github.com/AngelCastilloB/carda-lite/workflows/Build/badge.svg)](https://github.com/AngelCastilloB/carda-lite/actions)
 
 A very simple Cardano wallet written in TypeScript using Angular 13.
 
 The application uses the [Cardano Serialization Lib](https://github.com/emurgo/cardano-serialization-lib) to create and sign transactions and [Blockfrost](https://blockfrost.io/) to interact with the blockchain (Query address, TXs, UTXOs and to submit transactions to the blockchain).
 
-For simplicity sake this application only work with the first derived payment address (single address mode similar to some browser wallets), also, the wallet only work with ADA (native assets are ignored, however they are taken into account correctly when building transactions).
+For simplicity's sake this application only work with the first derived payment address (single address mode similar to some browser wallets), also, the wallet only work with ADA (native assets are ignored, however they are taken into account correctly when building transactions).
 
 With this application you can:
 
